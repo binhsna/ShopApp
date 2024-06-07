@@ -14,6 +14,12 @@ CREATE TABLE users(
     facebook_account_id INT DEFAULT 0,
     google_account_id INT DEFAULT 0
 );
+CREATE TABLE roles(
+    id INT PRIMARY KEY,
+    name VARCHAR(20) NOT NULL,
+);
+ALTER TABLE users ADD COLUMN role_id INT;
+ALTER TABLE users ADD FOREIGN KEY(role_id) REFERENCES roles(id);
 CREATE TABLE tokens(
     id INT PRIMARY KEY AUTO_INCREMENT,
     token VARCHAR(255) UNIQUE NOT NULL,
@@ -50,4 +56,40 @@ CREATE TABLE products(
     updated_at DATETIME,
     category_id INT,
     FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+-- Đặt hàng - orders
+CREATE TABLE orders(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id int,
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    fullname VARCHAR(100) DEFAULT '',
+    email VARCHAR(100) DEFAULT '',
+    phone_number VARCHAR(20) NOT NULL,
+    address VARCHAR(200) NOT NULL, -- Địa chỉ gửi
+    note VARCHAR(100) DEFAULT '',
+    order_date DATETIME DEFAULT CURRENT_TIMESTAMP, -- Ngày đặt
+    status VARCHAR(20),
+    total_money FLOAT CHECK(total_money >= 0)
+);
+ALTER TABLE orders ADD COLUMN `shipping_method` VARCHAR(100); -- Phương thức vận chuyển
+ALTER TABLE orders ADD COLUMN `shipping_address` VARCHAR(200); -- Địa chỉ nhận
+ALTER TABLE orders ADD COLUMN `shipping_date` DATE; -- Ngày gửi đến
+ALTER TABLE orders ADD COLUMN `tracking_number` VARCHAR(100); -- số vận đơn
+ALTER TABLE orders ADD COLUMN `payment_method` VARCHAR(100);
+-- Xóa 1 đơn hàng => Xóa mềm => Thêm trường active
+ALTER TABLE orders ADD COLUMN `active` TINYINT(1);
+-- status phải nhận các giá trị trong list có sẵn
+ALTER TABLE orders
+MODIFY COLUMN status ENUM('pending','processing','shipped','delivered','cancelled')
+COMMENT 'Trạng thái đơn hàng';
+CREATE TABLE order_details(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT,
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    product_id INT,
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    price FLOAT CHECK(price >= 0), -- Giá 1 sản phẩm
+    number_of_products INT CHECK(number_of_products > 0), -- Số sản phẩm
+    total_money FLOAT CHECK(total_money >= 0),
+    color VARCHAR(20) DEFAULT ''
 );
