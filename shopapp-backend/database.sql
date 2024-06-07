@@ -57,6 +57,15 @@ CREATE TABLE products(
     category_id INT,
     FOREIGN KEY (category_id) REFERENCES categories(id)
 );
+-- Bảng ảnh sản phẩm id
+CREATE TABLE product_images(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    product_id INT,
+    CONSTRAINT fk_product_images_product_id
+    FOREIGN KEY (product_id) 
+    REFERENCES products(id) ON DELETE CASCADE,
+    image_url VARCHAR(300),
+);
 -- Đặt hàng - orders
 CREATE TABLE orders(
     id INT PRIMARY KEY AUTO_INCREMENT,
