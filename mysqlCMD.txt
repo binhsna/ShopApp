@@ -1,0 +1,11 @@
+
+-- Truy cập MySQL với cmd
+mysql -u root -p
+-- Hiện thị tất cả database
+show databases;
+-- Truy cập vào database chỉ định
+use database_name;
+-- Hiện thị tất cả các bảng trong database đang được sử dụng
+show tables;
+-- 
+
