@@ -90,7 +90,7 @@ ALTER TABLE orders ADD COLUMN `active` TINYINT(1);
 -- status phải nhận các giá trị trong list có sẵn
 ALTER TABLE orders
 MODIFY COLUMN status ENUM('pending','processing','shipped','delivered','cancelled')
-COMMENT 'Trạng thái đơn hàng';
+DEFAULT 'pending' COMMENT 'Trạng thái đơn hàng';
 CREATE TABLE order_details(
     id INT PRIMARY KEY AUTO_INCREMENT,
     order_id INT,

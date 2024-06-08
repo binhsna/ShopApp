@@ -8,4 +8,6 @@ spring:
 #    port
 server:
   port: 8080
+api:
+  prefix: api/v1
 
