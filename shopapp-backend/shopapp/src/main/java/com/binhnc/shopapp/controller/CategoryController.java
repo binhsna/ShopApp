@@ -2,7 +2,7 @@ package com.binhnc.shopapp.controller;
 
 import com.binhnc.shopapp.dto.CategoryDTO;
 import com.binhnc.shopapp.model.Category;
-import com.binhnc.shopapp.service.CategoryService;
+import com.binhnc.shopapp.service.ICategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ import java.util.List;
 // Dependence Inject
 @RequiredArgsConstructor
 public class CategoryController {
-    private final CategoryService categoryService;
+    private final ICategoryService categoryService;
 
     // Thêm mới category
     @PostMapping("")

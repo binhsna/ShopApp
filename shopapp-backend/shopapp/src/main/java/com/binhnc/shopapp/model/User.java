@@ -10,6 +10,7 @@ import java.util.Date;
 @Data
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
@@ -36,10 +37,10 @@ public class User {
     private Date dateOfBirth;
 
     @Column(name = "facebook_account_id")
-    private Date facebookAccountId;
+    private int facebookAccountId;
 
     @Column(name = "google_account_id")
-    private Date googleAccountId;
+    private int googleAccountId;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
