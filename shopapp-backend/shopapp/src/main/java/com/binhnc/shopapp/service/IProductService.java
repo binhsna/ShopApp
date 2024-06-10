@@ -5,6 +5,7 @@ import com.binhnc.shopapp.dto.ProductDTO;
 import com.binhnc.shopapp.dto.ProductImageDTO;
 import com.binhnc.shopapp.model.Product;
 import com.binhnc.shopapp.model.ProductImage;
+import com.binhnc.shopapp.response.ProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -13,7 +14,7 @@ public interface IProductService {
 
     Product getProductById(Long id) throws Exception;
 
-    Page<Product> getAllProducts(PageRequest pageRequest);
+    Page<ProductResponse> getAllProducts(PageRequest pageRequest);
 
     Product updateProduct(Long id, ProductDTO productDTO) throws Exception;
 

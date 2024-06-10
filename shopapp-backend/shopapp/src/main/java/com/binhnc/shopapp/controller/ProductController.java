@@ -6,9 +6,14 @@ import com.binhnc.shopapp.dto.ProductDTO;
 import com.binhnc.shopapp.dto.ProductImageDTO;
 import com.binhnc.shopapp.model.Product;
 import com.binhnc.shopapp.model.ProductImage;
+import com.binhnc.shopapp.response.ProductListResponse;
+import com.binhnc.shopapp.response.ProductResponse;
 import com.binhnc.shopapp.service.IProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,11 +39,21 @@ public class ProductController {
     private IProductService productService;
 
     @GetMapping("")
-    public ResponseEntity<String> getProducts(
+    public ResponseEntity<ProductListResponse> getProducts(
             @RequestParam("page") int page,
-            @RequestParam("limit") int limit
-    ) {
-        return ResponseEntity.ok(String.format("page = %d, limit = %d", page, limit));
+            @RequestParam("limit") int limit) {
+        // Tạo PageRequest từ thông tin trang và giới hạn
+        PageRequest pageRequest = PageRequest.of(
+                page - 1, limit, Sort.by("createAt").descending());
+        Page<ProductResponse> productsPage = productService.getAllProducts(pageRequest);
+        // Lấy tổng số trang
+        int totalPages = productsPage.getTotalPages();
+        // Lấy ra danh sách product
+        List<ProductResponse> products = productsPage.getContent();
+        return ResponseEntity.ok(ProductListResponse.builder()
+                .products(products)
+                .totalPages(totalPages)
+                .build());
     }
 
     // http://localhost:8080/api/v1/products/6
