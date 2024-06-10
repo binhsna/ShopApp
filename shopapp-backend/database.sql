@@ -57,6 +57,7 @@ CREATE TABLE products(
     category_id INT,
     FOREIGN KEY (category_id) REFERENCES categories(id)
 );
+ALTER TABLE products AUTO_INCREMENT = 1;
 -- Bảng ảnh sản phẩm id
 CREATE TABLE product_images(
     id INT PRIMARY KEY AUTO_INCREMENT,

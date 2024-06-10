@@ -7,6 +7,7 @@ import lombok.*;
 @Data // toString
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDTO {
