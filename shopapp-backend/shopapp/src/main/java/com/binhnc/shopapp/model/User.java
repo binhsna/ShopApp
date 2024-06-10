@@ -7,13 +7,12 @@ import java.util.Date;
 
 @Entity
 @Table(name = "users")
-@Data
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -56,22 +56,39 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public OrderResponse getOrderById(Long id) {
-        return null;
+    public Order getOrderById(Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(null);
     }
 
     @Override
-    public OrderResponse updateOrder(Long id, OrderDTO orderDTO) {
-        return null;
+    public Order updateOrder(Long id, OrderDTO orderDTO) throws Exception {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Cannot find order with id: " + id));
+        User existingUser = userRepository.findById(orderDTO.getUserId())
+                .orElseThrow(() -> new DataNotFoundException("Cannot find user with id: " + id));
+        // Tạo một luồng bằng ánh xạ riêng để kiểm soát việc ánh xạ
+        modelMapper.typeMap(OrderDTO.class, Order.class)
+                .addMappings(mapper -> mapper.skip(Order::setId));
+        // Cập nhật các trường của đơn hàng từ orderDTO
+        modelMapper.map(orderDTO, order);
+        order.setUser(existingUser);
+        return orderRepository.save(order);
     }
 
     @Override
     public void deleteOrder(Long id) {
-
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        // No hard-delete => please soft-delete
+        if (optionalOrder.isPresent()) {
+            // orderRepository.delete(optionalOrder.get());
+            optionalOrder.get().setActive(false);
+            orderRepository.save(optionalOrder.get());
+        }
     }
 
     @Override
-    public List<OrderResponse> getAllOrdersByUserId(Long userId) {
-        return List.of();
+    public List<Order> findByUserId(Long userId) {
+        return orderRepository.findByUserId(userId);
     }
 }
