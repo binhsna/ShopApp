@@ -8,5 +8,6 @@ import com.binhnc.shopapp.model.User;
 public interface IUserService {
     User createUser(UserDTO userDTO) throws DataNotFoundException;
 
-    String login(String phoneNumber, String password);
+    // Trả về token
+    String login(String phoneNumber, String password) throws Exception;
 }
