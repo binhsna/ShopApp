@@ -15,7 +15,7 @@ CREATE TABLE users(
     google_account_id INT DEFAULT 0
 );
 CREATE TABLE roles(
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(20) NOT NULL,
 );
 ALTER TABLE users ADD COLUMN role_id INT;
