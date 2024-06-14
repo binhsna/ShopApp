@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("${api.prefix}/orders")
+@RequestMapping("${api.prefix}/orders")// ${api.prefix} -> Biến môi trường lưu trong application.yml
 //@Validated -> Nếu đặt ở đây thì sẽ kiểm tra điều kiện đầu vào luôn và không vào logic code kiểm tra mình mong muốn
 @RequiredArgsConstructor
 public class OrderController {
