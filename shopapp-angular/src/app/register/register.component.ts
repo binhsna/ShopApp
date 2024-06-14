@@ -1,5 +1,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {NgForm} from "@angular/forms";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-register',
@@ -18,15 +20,16 @@ export class RegisterComponent {
   isAccepted: boolean;
   dateOfBirth: Date;
 
-  constructor() {
-    this.phone = "";
-    this.password = "";
-    this.retypePassword = "";
-    this.fullName = "";
-    this.address = "";
-    this.isAccepted = false;
+  constructor(private http: HttpClient, private router: Router) {
+    this.phone = "11223344";
+    this.password = "123456";
+    this.retypePassword = "123456";
+    this.fullName = "nguyen van test";
+    this.address = "dc 123";
+    this.isAccepted = true;
     this.dateOfBirth = new Date();
     this.dateOfBirth.setFullYear(this.dateOfBirth.getFullYear() - 18);
+    // Inject http: Gửi API, router: Chuyển màn hình
   }
 
   onPhoneChange() {
@@ -34,15 +37,45 @@ export class RegisterComponent {
   }
 
   register() {
+    /*
     const message = `phone: ${this.phone}\n` +
       `password: ${this.password}\n` +
       `retypePassword: ${this.retypePassword}\n` +
       `fullName: ${this.fullName}\n` +
       `address: ${this.address}\n` +
       `isAccepted: ${this.isAccepted}\n` +
-      `dateOfBirth: ${this.dateOfBirth}\n`
-    ;
-    alert(message);
+      `dateOfBirth: ${this.dateOfBirth}\n`;
+    */
+    //alert(message);
+    debugger
+    const apiUrl = "http://localhost:8080/api/v1/users/register";
+    const registerData = {
+      "fullname": this.fullName,
+      "phone_number": this.phone,
+      "address": this.address,
+      "password": this.password,
+      "retype_password": this.retypePassword,
+      "date_of_birth": this.dateOfBirth,
+      "facebook_account_id": 0,
+      "google_account_id": 0,
+      "role_id": 1
+    }
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    this.http.post(apiUrl, registerData, {headers: headers})
+      .subscribe({
+        next: (response: any) => {
+          debugger
+          this.router.navigate(['/login']);
+        },
+        complete: () => {
+          debugger
+        }, error: (error: any) => {
+          // Xử lý lỗi nếu có
+          alert(`Cannot register, error: ${error.error}`)
+        }
+      });
   }
 
   // How to check password match?
