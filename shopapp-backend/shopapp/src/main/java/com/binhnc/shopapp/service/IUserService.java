@@ -6,7 +6,7 @@ import com.binhnc.shopapp.exception.DataNotFoundException;
 import com.binhnc.shopapp.model.User;
 
 public interface IUserService {
-    User createUser(UserDTO userDTO) throws DataNotFoundException;
+    User createUser(UserDTO userDTO) throws Exception;
 
     // Trả về token
     String login(String phoneNumber, String password) throws Exception;
