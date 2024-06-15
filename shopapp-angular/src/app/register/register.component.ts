@@ -1,7 +1,8 @@
 import {Component, ViewChild} from '@angular/core';
 import {NgForm} from "@angular/forms";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Router} from "@angular/router";
+import {UserService} from "../services/user.service";
+import {RegisterDTO} from "../dtos/registerDTO";
 
 @Component({
   selector: 'app-register',
@@ -20,12 +21,12 @@ export class RegisterComponent {
   isAccepted: boolean;
   dateOfBirth: Date;
 
-  constructor(private http: HttpClient, private router: Router) {
-    this.phone = "11223344";
-    this.password = "123456";
-    this.retypePassword = "123456";
-    this.fullName = "nguyen van test";
-    this.address = "dc 123";
+  constructor(private router: Router, private userService: UserService) {
+    this.phone = "";
+    this.password = "";
+    this.retypePassword = "";
+    this.fullName = "";
+    this.address = "";
     this.isAccepted = true;
     this.dateOfBirth = new Date();
     this.dateOfBirth.setFullYear(this.dateOfBirth.getFullYear() - 18);
@@ -48,8 +49,8 @@ export class RegisterComponent {
     */
     //alert(message);
     debugger
-    const apiUrl = "http://localhost:8080/api/v1/users/register";
-    const registerData = {
+
+    const registerDTO: RegisterDTO = {
       "fullname": this.fullName,
       "phone_number": this.phone,
       "address": this.address,
@@ -60,11 +61,9 @@ export class RegisterComponent {
       "google_account_id": 0,
       "role_id": 1
     }
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-    });
-    this.http.post(apiUrl, registerData, {headers: headers})
-      .subscribe({
+    // Call api from userService
+    this.userService.register(registerDTO).subscribe(
+      {
         next: (response: any) => {
           debugger
           this.router.navigate(['/login']);
@@ -75,7 +74,8 @@ export class RegisterComponent {
           // Xử lý lỗi nếu có
           alert(`Cannot register, error: ${error.error}`)
         }
-      });
+      }
+    );
   }
 
   // How to check password match?
