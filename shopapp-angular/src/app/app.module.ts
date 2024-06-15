@@ -32,9 +32,9 @@ import {HttpClientModule} from '@angular/common/http';
     //HomeComponent,
     //OrderComponent,
     //OrderConfirmComponent,
-    //LoginComponent,
-    // DetailProductComponent,
-    RegisterComponent,
+    LoginComponent,
+    //DetailProductComponent,
+    //RegisterComponent,
   ]
 })
 export class AppModule {

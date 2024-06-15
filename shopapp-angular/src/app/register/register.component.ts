@@ -2,7 +2,7 @@ import {Component, ViewChild} from '@angular/core';
 import {NgForm} from "@angular/forms";
 import {Router} from "@angular/router";
 import {UserService} from "../services/user.service";
-import {RegisterDTO} from "../dtos/registerDTO";
+import {RegisterDTO} from "../dtos/register.dto";
 
 @Component({
   selector: 'app-register',
@@ -13,7 +13,7 @@ export class RegisterComponent {
   // Tham chiếu đến form trên view
   @ViewChild("registerForm") registerForm!: NgForm
   // Khai báo các biến tương ứng với các trường dữ liệu trong java
-  phone: string;
+  phoneNumber: string;
   password: string;
   retypePassword: string;
   fullName: string;
@@ -22,7 +22,7 @@ export class RegisterComponent {
   dateOfBirth: Date;
 
   constructor(private router: Router, private userService: UserService) {
-    this.phone = "";
+    this.phoneNumber = "";
     this.password = "";
     this.retypePassword = "";
     this.fullName = "";
@@ -33,8 +33,8 @@ export class RegisterComponent {
     // Inject http: Gửi API, router: Chuyển màn hình
   }
 
-  onPhoneChange() {
-    console.log(`Phone typed: ${this.phone}`);
+  onPhoneNumberChange() {
+    console.log(`Phone typed: ${this.phoneNumber}`);
   }
 
   register() {
@@ -52,7 +52,7 @@ export class RegisterComponent {
 
     const registerDTO: RegisterDTO = {
       "fullname": this.fullName,
-      "phone_number": this.phone,
+      "phone_number": this.phoneNumber,
       "address": this.address,
       "password": this.password,
       "retype_password": this.retypePassword,
