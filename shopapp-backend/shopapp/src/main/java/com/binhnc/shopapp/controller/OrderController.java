@@ -1,9 +1,13 @@
 package com.binhnc.shopapp.controller;
 
+import com.binhnc.shopapp.component.LocalizationUtils;
 import com.binhnc.shopapp.dto.OrderDTO;
 import com.binhnc.shopapp.model.Order;
+import com.binhnc.shopapp.response.ListMessageResponse;
+import com.binhnc.shopapp.response.MessageResponse;
 import com.binhnc.shopapp.response.OrderResponse;
 import com.binhnc.shopapp.service.IOrderService;
+import com.binhnc.shopapp.utils.MessageKeys;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
     private final IOrderService orderService;
+    private final LocalizationUtils localizationUtils;
 
     @PostMapping("")
     public ResponseEntity<?> createOrder(
@@ -30,12 +35,20 @@ public class OrderController {
                         .stream()
                         .map(FieldError::getDefaultMessage)
                         .toList();
-                return ResponseEntity.badRequest().body(errorMessages);
+                return ResponseEntity.badRequest().body(
+                        ListMessageResponse.builder()
+                                .messages(errorMessages)
+                                .build()
+                );
             }
             OrderResponse orderResponse = orderService.createOrder(orderDTO);
             return ResponseEntity.ok(orderResponse);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(
+                    MessageResponse.builder()
+                            .message(localizationUtils.getLocalizedMessage(MessageKeys.INSERT_CATEGORY_FAILED, e.getMessage()))
+                            .build()
+            );
         }
     }
 
@@ -78,7 +91,10 @@ public class OrderController {
         try {
             // Xóa mềm => Cập nhật trường active = false
             orderService.deleteOrder(id);
-            return ResponseEntity.ok("Order deleted successfully!");
+            return ResponseEntity.ok(
+                    MessageResponse.builder()
+                            .message(localizationUtils.getLocalizedMessage(MessageKeys.DELETE_ORDER_SUCCESSFULLY, id))
+                            .build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

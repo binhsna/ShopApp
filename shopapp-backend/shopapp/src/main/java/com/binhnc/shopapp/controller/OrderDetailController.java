@@ -1,9 +1,13 @@
 package com.binhnc.shopapp.controller;
 
+import com.binhnc.shopapp.component.LocalizationUtils;
 import com.binhnc.shopapp.dto.OrderDetailDTO;
 import com.binhnc.shopapp.model.OrderDetail;
+import com.binhnc.shopapp.response.ListMessageResponse;
+import com.binhnc.shopapp.response.MessageResponse;
 import com.binhnc.shopapp.response.OrderDetailResponse;
 import com.binhnc.shopapp.service.IOrderDetailService;
+import com.binhnc.shopapp.utils.MessageKeys;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderDetailController {
     private final IOrderDetailService orderDetailService;
+    private final LocalizationUtils localizationUtils;
 
     // Thêm mới 1 order detail
     @PostMapping("")
@@ -30,7 +35,11 @@ public class OrderDetailController {
                         .stream()
                         .map(FieldError::getDefaultMessage)
                         .toList();
-                return ResponseEntity.badRequest().body(errorMessages);
+                return ResponseEntity.badRequest().body(
+                        ListMessageResponse.builder()
+                                .messages(errorMessages)
+                                .build()
+                );
             }
             OrderDetail newOrderDetail = orderDetailService.createOrderDetail(orderDetailDTO);
             return ResponseEntity.ok().body(OrderDetailResponse.fromOrderDetail(newOrderDetail));
@@ -81,11 +90,13 @@ public class OrderDetailController {
     public ResponseEntity<?> deleteOrderDetail(@Valid @PathVariable("id") Long id) {
         try {
             orderDetailService.deleteById(id);
-            return ResponseEntity.ok().body("Delete Order detail with id: " + id + " successfully!");
+            return ResponseEntity.ok().body(
+                    MessageResponse.builder()
+                            .message(localizationUtils.getLocalizedMessage(MessageKeys.DELETE_ORDER_DETAIL_SUCCESSFULLY, id))
+                            .build());
             // return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
 }

@@ -1,8 +1,7 @@
 package com.binhnc.shopapp.controller;
 
-
+import com.binhnc.shopapp.component.LocalizationUtils;
 import com.binhnc.shopapp.dto.ProductDTO;
-
 import com.binhnc.shopapp.dto.ProductImageDTO;
 import com.binhnc.shopapp.model.Product;
 import com.binhnc.shopapp.model.ProductImage;
@@ -38,6 +37,8 @@ import java.util.UUID;
 public class ProductController {
     @Autowired
     private IProductService productService;
+    @Autowired
+    private LocalizationUtils localizationUtils;
 
     @GetMapping("")
     public ResponseEntity<ProductListResponse> getProducts(
