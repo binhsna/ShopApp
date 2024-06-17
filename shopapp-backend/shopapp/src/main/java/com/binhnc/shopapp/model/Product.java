@@ -3,9 +3,7 @@ package com.binhnc.shopapp.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
-@Entity
+@Entity(name = "Product")
 @Table(name = "products")
 @Getter
 @Setter
