@@ -7,13 +7,18 @@
   </div>
   <!-- Đoạn này có 1 ô searchbox bên trái, 1 combobox bên phải -->
   <div class="search-box">
-    <input type="text" class="form-control search-input" placeholder="Tìm sản phẩm">
-    <select class="form-control product-category">
-      <option selected disabled class="search-input">Danh mục sản phẩm</option>
-      <option class="search-input">Đồ điện tử</option>
-      <option class="search-input">Hải sản</option>
-      <option class="search-input">Bánh kẹo</option>
+    <input type="text" class="form-control search-input"
+           [(ngModel)]="keyword" name="keyword"
+           placeholder="Tìm sản phẩm">
+    <select class="form-control product-category"
+            [(ngModel)]="selectedCategoryId"
+            name="selectedCategoryId">
+      <option class="search-input" [value]="0">Tất cả</option>
+      <option class="search-input" *ngFor="let category of categories" [value]="category.id">
+        {{category.name}}
+      </option>
     </select>
+    <button class="btn btn-primary m-lg-2" (click)="searchProducts()">Tìm kiếm</button>
   </div>
   <div class="row">
     <div class="col-lg-4 col-md-6 col-sm-12" *ngFor="let product of products">

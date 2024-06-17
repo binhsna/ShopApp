@@ -153,7 +153,10 @@ public class ProductController {
                         .contentType(MediaType.IMAGE_JPEG)
                         .body(resource);
             } else {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(new UrlResource(Paths.get("uploads/not-found.png").toUri()));
+                // return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
