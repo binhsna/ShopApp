@@ -5,6 +5,7 @@ import com.binhnc.shopapp.dto.ProductDTO;
 import com.binhnc.shopapp.dto.ProductImageDTO;
 import com.binhnc.shopapp.model.Product;
 import com.binhnc.shopapp.model.ProductImage;
+import com.binhnc.shopapp.response.MessageResponse;
 import com.binhnc.shopapp.response.ProductListResponse;
 import com.binhnc.shopapp.response.ProductResponse;
 import com.binhnc.shopapp.service.IProductService;
@@ -48,7 +49,9 @@ public class ProductController {
             @RequestParam("limit") int limit) {
         // Tạo PageRequest từ thông tin trang và giới hạn
         PageRequest pageRequest = PageRequest.of(
-                page - 1, limit, Sort.by("createAt").descending());
+                page - 1, limit,
+                Sort.by("createAt")
+                        .descending());
         Page<ProductResponse> productsPage = productService.getAllProducts(pageRequest);
         // Lấy tổng số trang
         int totalPages = productsPage.getTotalPages();
@@ -86,7 +89,10 @@ public class ProductController {
             Product newProduct = productService.createProduct(productDTO);
             return ResponseEntity.ok(newProduct);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(MessageResponse.builder()
+                            .message(localizationUtils.getLocalizedMessage(MessageKeys.INSERT_PRODUCT_FAILED, e.getMessage()))
+                            .build());
         }
     }
 
@@ -185,17 +191,26 @@ public class ProductController {
             Product updateProduct = productService.updateProduct(id, productDTO);
             return ResponseEntity.ok(updateProduct);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(MessageResponse.builder()
+                            .message(localizationUtils.getLocalizedMessage(MessageKeys.UPDATE_PRODUCT_FAILED, e.getMessage()))
+                            .build());
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<MessageResponse> deleteProduct(@PathVariable Long id) {
         try {
             productService.deleteProduct(id);
-            return ResponseEntity.status(HttpStatus.OK).body("deleted product with id = " + id);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(MessageResponse.builder()
+                            .message(localizationUtils.getLocalizedMessage(MessageKeys.DELETE_PRODUCT_SUCCESSFULLY))
+                            .build());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(MessageResponse.builder()
+                            .message(localizationUtils.getLocalizedMessage(MessageKeys.DELETE_PRODUCT_FAILED, e.getMessage()))
+                            .build());
         }
     }
 
