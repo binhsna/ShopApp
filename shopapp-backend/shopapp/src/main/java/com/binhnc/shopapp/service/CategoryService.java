@@ -3,6 +3,7 @@ package com.binhnc.shopapp.service;
 import com.binhnc.shopapp.dto.CategoryDTO;
 import com.binhnc.shopapp.model.Category;
 import com.binhnc.shopapp.repository.CategoryRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ public class CategoryService implements ICategoryService {
     private final CategoryRepository categoryRepository;
 
     @Override
+    @Transactional
     public Category createCategory(CategoryDTO categoryDTO) {
         Category newCategory = Category.builder()
                 .name(categoryDTO.getName())
@@ -22,6 +24,7 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
+    @Transactional
     public Category updateCategory(Long id, CategoryDTO categoryDTO) {
         Category existingCategory = getCategoryById(id);
         existingCategory.setName(categoryDTO.getName());
@@ -30,6 +33,7 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteCategory(Long id) {
         // Xóa xong
         categoryRepository.deleteById(id);

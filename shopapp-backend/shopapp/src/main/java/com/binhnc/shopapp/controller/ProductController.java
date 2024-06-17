@@ -50,8 +50,8 @@ public class ProductController {
         // Tạo PageRequest từ thông tin trang và giới hạn
         PageRequest pageRequest = PageRequest.of(
                 page - 1, limit,
-                Sort.by("createAt")
-                        .descending());
+                //Sort.by("createAt").descending())
+                Sort.by("id").ascending());
         Page<ProductResponse> productsPage = productService.getAllProducts(pageRequest);
         // Lấy tổng số trang
         int totalPages = productsPage.getTotalPages();

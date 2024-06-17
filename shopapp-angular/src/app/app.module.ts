@@ -14,6 +14,7 @@ import {
   HTTP_INTERCEPTORS
 } from '@angular/common/http';
 import {TokenInterceptor} from "./interceptors/token.interceptor";
+import {NgOptimizedImage} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import {TokenInterceptor} from "./interceptors/token.interceptor";
     BrowserModule,
     FormsModule,
     HttpClientModule,
+    NgOptimizedImage,
   ],
   providers: [
     {
@@ -39,10 +41,10 @@ import {TokenInterceptor} from "./interceptors/token.interceptor";
     },
   ],
   bootstrap: [
-    //HomeComponent,
+    HomeComponent,
     //OrderComponent,
     //OrderConfirmComponent,
-    LoginComponent,
+    //LoginComponent,
     //DetailProductComponent,
     //RegisterComponent,
   ]

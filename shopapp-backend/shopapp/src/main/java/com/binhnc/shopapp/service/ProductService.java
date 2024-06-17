@@ -11,6 +11,7 @@ import com.binhnc.shopapp.repository.CategoryRepository;
 import com.binhnc.shopapp.repository.ProductImageRepository;
 import com.binhnc.shopapp.repository.ProductRepository;
 import com.binhnc.shopapp.response.ProductResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,7 @@ public class ProductService implements IProductService {
     private final ProductImageRepository productImageRepository;
 
     @Override
+    @Transactional
     public Product createProduct(ProductDTO productDTO) {
         try {
             Category existingCategory = categoryRepository
@@ -59,6 +61,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    @Transactional
     public Product updateProduct(Long id, ProductDTO productDTO) throws Exception {
         Product existingProduct = getProductById(id);
         if (existingProduct != null) {
@@ -80,6 +83,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    @Transactional
     public void deleteProduct(Long id) {
         Optional<Product> optionalProduct = productRepository.findById(id);
         optionalProduct.ifPresent(productRepository::delete);
@@ -91,6 +95,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    @Transactional
     public ProductImage createProductImage(Long productId, ProductImageDTO productImageDTO) throws Exception {
         Product existingProduct = productRepository
                 .findById(productId)
