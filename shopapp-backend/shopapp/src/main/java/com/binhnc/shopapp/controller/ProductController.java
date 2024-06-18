@@ -71,7 +71,11 @@ public class ProductController {
     public ResponseEntity<?> getProductById(@PathVariable("id") Long productId) {
         try {
             Product existingProduct = productService.getProductById(productId);
-            return ResponseEntity.ok(ProductResponse.fromProduct(existingProduct));
+            ProductResponse productResponse = ProductResponse.fromProduct(existingProduct);
+            //return ResponseEntity.ok().body(productResponse);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(productResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

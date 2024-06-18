@@ -41,11 +41,11 @@ import {NgOptimizedImage} from "@angular/common";
     },
   ],
   bootstrap: [
-    HomeComponent,
+    //HomeComponent,
     //OrderComponent,
     //OrderConfirmComponent,
     //LoginComponent,
-    //DetailProductComponent,
+    DetailProductComponent,
     //RegisterComponent,
   ]
 })
