@@ -3,6 +3,7 @@ import {Product} from "../../models/product";
 import {ProductService} from "../../services/product.service";
 import {environment} from "../../environments/environment";
 import {ProductImage} from "../../models/product.image";
+import {CartService} from "../../services/cart.service";
 
 @Component({
   selector: 'app-detail-product',
@@ -13,9 +14,11 @@ export class DetailProductComponent implements OnInit {
   product?: Product;
   productId: number = 0;
   currentImageIndex: number = 0;
+  quantity: number = 1;
 
   constructor(
     private productService: ProductService,
+    private cartService: CartService,
     /* private categoryService: CategoryService,
      private router: Router,
      private activatedRoute: ActivatedRoute,*/
@@ -26,6 +29,7 @@ export class DetailProductComponent implements OnInit {
     // Lấy ra productId từ URL
     // const idParam = this.activatedRoute.snapshot.paramMap.get('id');
     debugger;
+    // this.cartService.clearCart();
     const idParam = 1;// fake tạo 1 giá trị
     if (idParam !== null) {
       this.productId = +idParam;
@@ -85,5 +89,29 @@ export class DetailProductComponent implements OnInit {
   previousImage(): void {
     debugger;
     this.showImage(this.currentImageIndex - 1);
+  }
+
+  addToCart(): void {
+    debugger;
+    if (this.product) {
+      this.cartService.addToCart(this.productId, this.quantity);
+    } else {
+      // Xử lý khi product là null
+      console.error("Không thể thêm sản phẩm vào giỏ hàng vì product là null.");
+    }
+  }
+
+  increaseQuantity(): void {
+    this.quantity++;
+  }
+
+  decreaseQuantity(): void {
+    if (this.quantity > 1)
+      this.quantity--;
+  }
+
+  buyNow(): void {
+    // Thực hiện xử lý khi người dùng muốn mua ngay
+
   }
 }
