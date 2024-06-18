@@ -15,8 +15,8 @@ import {Role} from "../../models/role";
 })
 export class LoginComponent implements OnInit {
   @ViewChild("loginForm") loginForm!: NgForm
-  phoneNumber: string = "";
-  password: string = "";
+  phoneNumber: string = "0971912772";
+  password: string = "123";
 
   roles: Role[] = [];// Mảng roles
   rememberMe: boolean = true;

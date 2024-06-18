@@ -1,35 +1,20 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {environment} from "../environments/environment";
-import {Product} from "../models/product";
+import {OrderDTO} from "../dtos/order/order.dto";
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
-  private apiGetProducts = `${environment.apiBaseUrl}/products`;
+  private apiUrl = `${environment.apiBaseUrl}/orders`;
 
   constructor(private http: HttpClient) {
   }
 
-  getProducts(keyword: string, categoryId: number, page: number, limit: number): Observable<Product[]> {
-    const params = new HttpParams()
-      .set('keyword', keyword.toString())
-      .set('category_id', categoryId.toString())
-      .set('page', page.toString())
-      .set('limit', limit.toString());
-    return this.http.get<Product[]>(this.apiGetProducts, {params});
-  }
-
-  getProductDetailProduct(productId: number) {
-    return this.http.get(`${environment.apiBaseUrl}/products/${productId}`);
-  }
-
-  getProductsByIds(productIds: number[]): Observable<Product[]> {
-    // Chuyển danh sách ID thành một chuỗi và truyền vào params
-    debugger;
-    const params = new HttpParams().set('ids', productIds.join(","));
-    return this.http.get<Product[]>(`${environment.apiBaseUrl}/products/by-ids`, {params});
+  placeOrder(orderData: OrderDTO): Observable<any> {
+    // Gửi yêu cầu đặt hàng
+    return this.http.post(this.apiUrl, orderData);
   }
 }
