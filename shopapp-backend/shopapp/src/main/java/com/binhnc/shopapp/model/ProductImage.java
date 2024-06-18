@@ -1,5 +1,6 @@
 package com.binhnc.shopapp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -24,6 +25,7 @@ public class ProductImage {
 
     @JsonIgnore
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 

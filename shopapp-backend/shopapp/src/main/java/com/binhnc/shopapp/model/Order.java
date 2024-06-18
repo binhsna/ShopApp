@@ -1,10 +1,12 @@
 package com.binhnc.shopapp.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -71,4 +73,8 @@ public class Order {
       */
     @Column(name = "active")
     private Boolean active; // Thuộc về admin
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference //=> Fix error -> Vòng lặp vô hạn
+    private List<OrderDetail> orderDetails;
 }

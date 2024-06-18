@@ -1,5 +1,6 @@
 package com.binhnc.shopapp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +19,8 @@ public class OrderDetail {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    @JsonBackReference //=> Fix error -> Vòng lặp vô hạn
     private Order order;
 
     @ManyToOne

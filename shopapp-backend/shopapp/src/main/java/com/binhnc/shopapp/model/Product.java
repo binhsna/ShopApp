@@ -1,5 +1,6 @@
 package com.binhnc.shopapp.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,5 +36,6 @@ public class Product extends BaseEntity {
 
     //=>
     @OneToMany(mappedBy = "product")
+    @JsonManagedReference
     private List<ProductImage> productImages;
 }
