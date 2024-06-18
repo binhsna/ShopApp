@@ -115,6 +115,7 @@ export class OrderComponent implements OnInit {
         ...this.orderData,
         ...this.orderForm.value
       };
+      this.orderData.total_money = this.totalAmount;
       this.orderData.cart_items = this.cartItems.map(cartItem => ({
         product_id: cartItem.product.id,
         quantity: cartItem.quantity
