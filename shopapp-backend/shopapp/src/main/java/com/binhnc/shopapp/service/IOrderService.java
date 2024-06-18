@@ -8,7 +8,7 @@ import com.binhnc.shopapp.response.OrderResponse;
 import java.util.List;
 
 public interface IOrderService {
-    OrderResponse createOrder(OrderDTO orderDTO) throws Exception;
+    Order createOrder(OrderDTO orderDTO) throws Exception;
 
     Order getOrderById(Long id);
 

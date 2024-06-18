@@ -41,7 +41,7 @@ public class OrderController {
                                 .build()
                 );
             }
-            OrderResponse orderResponse = orderService.createOrder(orderDTO);
+            Order orderResponse = orderService.createOrder(orderDTO);
             return ResponseEntity.ok(orderResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(

@@ -10,15 +10,51 @@
       <form>
         <div class="mb-3">
           <label for="name" class="form-label">Họ và tên</label>
-          <input type="text" class="form-control" id="name">
+          <input type="text" class="form-control"
+                 [(ngModel)]="orderData.fullname"
+                 name="name" id="name" placeholder="Họ và tên">
         </div>
         <div class="mb-3">
           <label for="email" class="form-label">Email</label>
-          <input type="email" class="form-control" id="email">
+          <input type="email" class="form-control"
+                 [(ngModel)]="orderData.email"
+                 name="email" id="email" placeholder="Email">
         </div>
         <div class="mb-3">
           <label for="phone" class="form-label">Số điện thoại</label>
-          <input type="text" class="form-control" id="Phone">
+          <input type="text" class="form-control" required
+                 [(ngModel)]="orderData.phone_number"
+                 name="phone_number" id="phone" placeholder="Số điện thoại">
+        </div>
+        <div class="mb-3">
+          <label for="address" class="form-label">Địa chỉ</label>
+          <input type="text" class="form-control" required
+                 [(ngModel)]="orderData.address"
+                 name="address" id="address" placeholder="Địa chỉ">
+        </div>
+        <div class="mb-3">
+          <label for="note" class="form-label">Ghi chú</label>
+          <input type="text" class="form-control" required
+                 [(ngModel)]="orderData.note"
+                 name="note" id="note" placeholder="Ghi chú">
+        </div>
+        <div class="form-group">
+          <label for="shippingMethod" class="form-label">Phương thức vận chuyển</label>
+          <select class="form-control" required
+                  [(ngModel)]="orderData.shipping_method"
+                  name="shipping_method" id="shippingMethod">
+            <option value="express">Nhanh (Express)</option>
+            <option value="normal">Thường (Normal)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="paymentMethod" class="form-label">Phương thức thanh toán</label>
+          <select class="form-control" required
+                  [(ngModel)]="orderData.payment_method"
+                  name="payment_method" id="paymentMethod">
+            <option value="cod">Thanh toán khi nhận hàng (COD)</option>
+            <option value="other">Thanh toán khác</option>
+          </select>
         </div>
       </form>
     </div>
@@ -34,38 +70,23 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-          <td>
-            <div class="product-info">
-              <img
-                src="https://images.pexels.com/photos/4050426/pexels-photo-4050426.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                alt="Product Image"
-                class="product-image">
-              <span class="product-name"></span>
-            </div>
-          </td>
-          <td>2</td>
-          <td>100,000đ</td>
-          <td>200,000đ</td>
-        </tr>
-        <tr>
-          <td>
-            <div class="product-info">
-              <img
-                src="https://images.pexels.com/photos/4050426/pexels-photo-4050426.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                alt="Product Image"
-                class="product-image">
-              <span class="product-name"></span>
-            </div>
-          </td>
-          <td>2</td>
-          <td>100,000đ</td>
-          <td>200,000đ</td>
-        </tr>
+        <ng-container *ngFor="let item of cartItems">
+          <tr>
+            <td>
+              <div class="product-info">
+                <img [src]="item.product.thumbnail" alt="Product Image" class="product-image">
+                <span class="product-name">{{item.product.name}}</span>
+              </div>
+            </td>
+            <td>{{item.quantity}}</td>
+            <td>{{item.product.price | currency:'VND' : 'symbol' : '1.2-2'}}</td>
+            <td>{{(item.product.price * item.quantity) | number:'1.2-2'}}</td>
+          </tr>
+        </ng-container>
         </tbody>
       </table>
       <div class="text-start mt-3">
-        <h4 class="header-text text-end">Tổng giá: 350,000đ</h4>
+        <h4 class="header-text text-end">Tổng giá: {{totalAmount | number:'1.2-2'}}</h4>
       </div>
       <div class="mt-3">
         <h4 class="product-header">Nhập coupon</h4>
@@ -75,7 +96,9 @@
         </div>
       </div>
       <div class="text-start mt-3">
-        <button type="button" class="btn btn-gradient">Đặt hàng</button>
+        <button type="button" class="btn btn-gradient"
+                (click)="placeOrder()">Đặt hàng
+        </button>
       </div>
     </div>
   </div>

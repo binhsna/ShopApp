@@ -9,10 +9,14 @@ import com.binhnc.shopapp.response.ProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
+
 public interface IProductService {
     Product createProduct(ProductDTO productDTO);
 
     Product getProductById(Long id) throws Exception;
+
+    List<Product> findProductsByIds(List<Long> productIds);
 
     Page<ProductResponse> getAllProducts(String keyword, Long categoryId, PageRequest pageRequest);
 

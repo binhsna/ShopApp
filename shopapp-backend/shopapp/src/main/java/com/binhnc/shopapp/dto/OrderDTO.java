@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data // toString
 @Builder
@@ -54,4 +55,6 @@ public class OrderDTO {
     private String paymentMethod;
 
     // status, mặc định là PENDING
+    @JsonProperty("cart_items")
+    private List<CartItemDTO> cartItems;
 }

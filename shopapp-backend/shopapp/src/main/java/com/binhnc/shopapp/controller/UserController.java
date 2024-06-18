@@ -2,6 +2,7 @@ package com.binhnc.shopapp.controller;
 
 import com.binhnc.shopapp.dto.UserDTO;
 import com.binhnc.shopapp.dto.UserLoginDTO;
+import com.binhnc.shopapp.model.Role;
 import com.binhnc.shopapp.model.User;
 import com.binhnc.shopapp.response.ListMessageResponse;
 import com.binhnc.shopapp.response.LoginResponse;
@@ -74,7 +75,7 @@ public class UserController {
             String token = userService.login(
                     userLoginDTO.getPhoneNumber(),
                     userLoginDTO.getPassword(),
-                    userLoginDTO.getRoleId()
+                    userLoginDTO.getRoleId() == null ? Long.valueOf(Role.USER) : userLoginDTO.getRoleId()
             );
             // Trả về token trong response
             return ResponseEntity.ok().body(

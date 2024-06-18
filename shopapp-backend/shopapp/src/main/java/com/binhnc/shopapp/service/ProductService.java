@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -52,6 +53,11 @@ public class ProductService implements IProductService {
     public Product getProductById(Long id) throws Exception {
         return productRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Cannot find product id with id = " + id));
+    }
+
+    @Override
+    public List<Product> findProductsByIds(List<Long> productIds) {
+        return productRepository.findProductsByIds(productIds);
     }
 
     @Override
