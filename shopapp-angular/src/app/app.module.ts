@@ -19,6 +19,7 @@ import {TokenInterceptor} from "./interceptors/token.interceptor";
 import {AppComponent} from './app/app.component';
 import {AppRoutingModule} from "./app-routing.module";
 import {NgbPopover} from "@ng-bootstrap/ng-bootstrap";
+import {AdminComponent} from './components/admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import {NgbPopover} from "@ng-bootstrap/ng-bootstrap";
     LoginComponent,
     RegisterComponent,
     DetailProductComponent,
-    AppComponent
+    AppComponent,
+    AdminComponent
   ],
   imports: [
     ReactiveFormsModule,

@@ -31,7 +31,7 @@ export class HeaderComponent implements OnInit {
   }
 
   handleItemClick(index: number): void {
-    // Handle the click event for earch popover item
+    // Handle the click event for search popover item
     // You can implement the logic you need here
     // alert(`Clicked on ${index}`);
     if (index == 2) {
