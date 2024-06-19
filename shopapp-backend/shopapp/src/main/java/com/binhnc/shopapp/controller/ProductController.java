@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
@@ -164,17 +165,23 @@ public class ProductController {
     @GetMapping("/images/{imageName}")
     public ResponseEntity<?> viewImage(@PathVariable String imageName) {
         try {
-            java.nio.file.Path imagePath = Paths.get("uploads/" + imageName);
-            UrlResource resource = new UrlResource(imagePath.toUri());
-            if (resource.exists()) {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.IMAGE_JPEG)
-                        .body(resource);
+            Path path = Paths.get("uploads/not-found.png");
+            if (!imageName.isEmpty()) {
+                java.nio.file.Path imagePath = Paths.get("uploads/" + imageName);
+                UrlResource resource = new UrlResource(imagePath.toUri());
+                if (resource.exists()) {
+                    return ResponseEntity.ok()
+                            .contentType(MediaType.IMAGE_JPEG)
+                            .body(resource);
+                } else {
+                    return ResponseEntity.ok()
+                            .contentType(MediaType.IMAGE_JPEG)
+                            .body(new UrlResource(path.toUri()));
+                }
             } else {
                 return ResponseEntity.ok()
                         .contentType(MediaType.IMAGE_JPEG)
-                        .body(new UrlResource(Paths.get("uploads/not-found.png").toUri()));
-                // return ResponseEntity.notFound().build();
+                        .body(new UrlResource(path.toUri()));
             }
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

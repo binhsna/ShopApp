@@ -4,6 +4,9 @@ import {ProductService} from "../../services/product.service";
 import {environment} from "../../environments/environment";
 import {ProductImage} from "../../models/product.image";
 import {CartService} from "../../services/cart.service";
+import {ActivatedRoute, Router} from "@angular/router";
+import {CategoryService} from "../../services/category.service";
+import {ProductDTO} from "../../dtos/product/product.dto";
 
 @Component({
   selector: 'app-detail-product',
@@ -11,7 +14,7 @@ import {CartService} from "../../services/cart.service";
   styleUrls: ['./detail-product.component.scss']
 })
 export class DetailProductComponent implements OnInit {
-  product?: Product;
+  product!: Product;
   productId: number = 0;
   currentImageIndex: number = 0;
   quantity: number = 1;
@@ -19,18 +22,17 @@ export class DetailProductComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private cartService: CartService,
-    /* private categoryService: CategoryService,
-     private router: Router,
-     private activatedRoute: ActivatedRoute,*/
+    private categoryService: CategoryService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
   ) {
   }
 
   ngOnInit() {
     // Lấy ra productId từ URL
-    // const idParam = this.activatedRoute.snapshot.paramMap.get('id');
     debugger;
     // this.cartService.clearCart();
-    const idParam = 2;// fake tạo 1 giá trị
+    const idParam = this.activatedRoute.snapshot.paramMap.get('id')!;
     if (idParam !== null) {
       this.productId = +idParam;
     }
@@ -39,13 +41,24 @@ export class DetailProductComponent implements OnInit {
         next: (response: any) => {
           // Lấy danh sách ảnh sản phẩm và thay đổi URL
           debugger;
+          let listImage: { id: number, image_url: string }[] = [];
+          let productDTO: ProductDTO = new ProductDTO();
+          productDTO.init(response);
           if (response.product_images && response.product_images.length > 0) {
             response.product_images.forEach((product_image: ProductImage) => {
               product_image.image_url = `${environment.apiBaseUrl}/products/images/${product_image.image_url}`;
+              productDTO.setProductImages(response.product_images);
             });
+          } else {
+            debugger;
+            for (let i = 0; i < 5; i++) {
+              debugger;
+              let image_url = `${environment.apiBaseUrl}/products/images/not-found.png`;
+              listImage.push({id: i, image_url: image_url});
+              productDTO.setProductImages(listImage);
+            }
           }
-          debugger;
-          this.product = response;
+          this.product = productDTO;
           // Bắt đầu với ảnh đầu tiên
           this.showImage(0);
         }, complete: () => {
