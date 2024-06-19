@@ -6,6 +6,8 @@ import {ProductService} from "../../services/product.service";
 import {OrderService} from "../../services/order.service";
 import {OrderDTO} from "../../dtos/order/order.dto";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {TokenService} from "../../services/token.service";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-order',
@@ -35,7 +37,10 @@ export class OrderComponent implements OnInit {
     private cartService: CartService,
     private productService: ProductService,
     private orderService: OrderService,
-    private fb: FormBuilder
+    private tokenService: TokenService,
+    private fb: FormBuilder,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
   ) {
     // Tạo FormGroup và các FormControl tương ứng
     this.orderForm = this.fb.group({
@@ -50,12 +55,17 @@ export class OrderComponent implements OnInit {
   }
 
   ngOnInit() {
+    debugger;
+    this.orderData.user_id = this.tokenService.getUserId();
     // Lấy ra danh sách sản phẩm từ giỏ hàng
     debugger;
     const cart = this.cartService.getCart();
     const productIds = Array.from(cart.keys());// Chuyển danh sách ID từ Map giỏ hàng
     // Gọi service để lấy thông tin sản phẩm dựa trên danh sách ID
     debugger;
+    if (productIds.length === 0) {
+      return;
+    }
     this.productService.getProductsByIds(productIds).subscribe({
       next: (products: Product[]) => {
         debugger;
@@ -116,6 +126,7 @@ export class OrderComponent implements OnInit {
         ...this.orderForm.value
       };
       this.orderData.total_money = this.totalAmount;
+      // Dữ liệu hợp lệ
       this.orderData.cart_items = this.cartItems.map(cartItem => ({
         product_id: cartItem.product.id,
         quantity: cartItem.quantity
@@ -124,7 +135,9 @@ export class OrderComponent implements OnInit {
       this.orderService.placeOrder(this.orderData).subscribe({
         next: (response) => {
           debugger;
-          console.log("Đặt hàng thành công");
+          alert("Đặt hàng thành công");
+          this.cartService.clearCart();
+          this.router.navigate(['/']);
         },
         complete: () => {
           debugger;
@@ -132,9 +145,12 @@ export class OrderComponent implements OnInit {
         },
         error: (error: any) => {
           // Hiển thị thông báo lỗi hoặc xử lý khác
-          alert("Dữ liệu không hợp lệ. Vui lòng kiểm tra lại")
+          alert(`Lỗi khi đặt hàng: ${error}`);
         }
       });
+    } else {
+      // Hiển thị thông báo lỗi hoặc khác
+      alert("Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.");
     }
   }
 }

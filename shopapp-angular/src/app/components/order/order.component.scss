@@ -1,3 +1,5 @@
+@import "../../styles/shared-styles.scss";
+
 .container {
   color: white;
 }
@@ -13,14 +15,14 @@
 }
 
 .form-control {
-  background-color: rgb(19, 23, 42);
+  background-color: $shopapp-background-color;
   border: 1px solid rgb(29, 33, 54);
   color: white;
 }
 
 .form-control:focus {
   border-color: white;
-  background-color: rgb(19, 23, 42);
+  background-color: $shopapp-background-color;
 }
 
 .form-label {
