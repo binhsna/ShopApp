@@ -1,9 +1,9 @@
 package com.binhnc.shopapp.service;
 
 import com.binhnc.shopapp.dto.OrderDTO;
-import com.binhnc.shopapp.exception.DataNotFoundException;
 import com.binhnc.shopapp.model.Order;
-import com.binhnc.shopapp.response.OrderResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -17,4 +17,6 @@ public interface IOrderService {
     void deleteOrder(Long id);
 
     List<Order> findByUserId(Long userId);
+
+    Page<Order> getOrdersByKeyword(String keyword, Pageable pageable);
 }

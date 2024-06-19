@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
+@Entity(name = "Order")
 @Table(name = "orders")
 @Data
 @Getter
