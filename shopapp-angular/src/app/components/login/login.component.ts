@@ -7,6 +7,7 @@ import {LoginResponse} from "../../responses/user/login.response";
 import {TokenService} from "../../services/token.service";
 import {RoleService} from "../../services/role.service";
 import {Role} from "../../models/role";
+import {UserResponse} from "../../responses/user/user.response";
 
 @Component({
   selector: 'app-login',
@@ -21,6 +22,7 @@ export class LoginComponent implements OnInit {
   roles: Role[] = [];// Mảng roles
   rememberMe: boolean = true;
   selectedRole: Role | undefined; // Biến để lưu giá trị được chọn từ dropdown
+  userResponse?: UserResponse;
 
   constructor(
     private router: Router,
@@ -65,15 +67,44 @@ export class LoginComponent implements OnInit {
           const {token} = response; // const token = response.token;
           if (this.rememberMe) {
             this.tokenService.setToken(token);
+            this.userService.getUserDetail(token).subscribe({
+              next: (response: any) => {
+                debugger;
+                /*
+                    this.userResponse = {
+                    id: response.id,
+                    fullname: response.fullname,
+                    phone_number: response.phone_number,
+                    address: response.address,
+                    is_active: response.is_active,
+                    date_of_birth: new Date(response.date_of_birth),
+                    facebook_account_id: response.facebook_account_id,
+                    google_account_id: response.google_account_id,
+                    role: response.role
+                  }
+                 */
+                this.userResponse = {
+                  ...response,
+                  date_of_birth: new Date(response.date_of_birth)
+                };
+                this.userService.saveUserResponseToLocalStorage(this.userResponse);
+                this.router.navigate(['/']);
+              },
+              complete: () => {
+                debugger;
+              }, error: (error: any) => {
+                alert(error?.error?.message)
+              }
+            });
           }
           // npm install @ngrx/store
-          // this.router.navigate(['/login']);
+
         },
         complete: () => {
           debugger
         }, error: (error: any) => {
           // Xử lý lỗi nếu có
-          alert(error?.error?.message)
+          alert(error?.error?.message);
         }
       }
     );

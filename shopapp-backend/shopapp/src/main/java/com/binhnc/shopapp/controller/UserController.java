@@ -4,10 +4,7 @@ import com.binhnc.shopapp.dto.UserDTO;
 import com.binhnc.shopapp.dto.UserLoginDTO;
 import com.binhnc.shopapp.model.Role;
 import com.binhnc.shopapp.model.User;
-import com.binhnc.shopapp.response.ListMessageResponse;
-import com.binhnc.shopapp.response.LoginResponse;
-import com.binhnc.shopapp.response.MessageResponse;
-import com.binhnc.shopapp.response.RegisterResponse;
+import com.binhnc.shopapp.response.*;
 import com.binhnc.shopapp.service.IUserService;
 import com.binhnc.shopapp.component.LocalizationUtils;
 import com.binhnc.shopapp.utils.MessageKeys;
@@ -16,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,7 +25,7 @@ public class UserController {
     private final LocalizationUtils localizationUtils;
 
     @PostMapping("/register")
-    public ResponseEntity<?> createUser(
+    public ResponseEntity<?> register(
             @Valid @RequestBody UserDTO userDTO,
             BindingResult result) {
         try {
@@ -68,7 +62,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> UserLoginDTO(
+    public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody UserLoginDTO userLoginDTO) {
         // Kiểm tra thông tin đăng nhập và sinh token
         try {
@@ -90,5 +84,17 @@ public class UserController {
                             .build()
             );
         }
+    }
+
+    @PostMapping("/details")
+    public ResponseEntity<UserResponse> getUserDetails(@RequestHeader("Authorization") String token) {
+        try {
+            String extractedToken = token.substring(7); // Loại bỏ "Bearer " từ chuỗi token
+            User user = userService.getUserDetailsFromToken(extractedToken);
+            return ResponseEntity.ok(UserResponse.fromUser(user));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+
     }
 }
