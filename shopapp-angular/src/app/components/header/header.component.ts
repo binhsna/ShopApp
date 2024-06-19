@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {UserService} from "../../services/user.service";
 import {UserResponse} from "../../responses/user/user.response";
 import {NgbPopoverConfig} from "@ng-bootstrap/ng-bootstrap";
-import {CartService} from "../../services/cart.service";
 import {TokenService} from "../../services/token.service";
 
 @Component({
@@ -13,6 +12,7 @@ import {TokenService} from "../../services/token.service";
 export class HeaderComponent implements OnInit {
   userResponse?: UserResponse | null;
   isPopoverOpen = false;
+  activeNavItem: number = 0;
 
   constructor(
     private userService: UserService,
@@ -40,5 +40,9 @@ export class HeaderComponent implements OnInit {
       this.userResponse = this.userService.getUserResponseFromLocalStorage();
     }
     this.isPopoverOpen = false; // Close the popover after clicking an item
+  }
+
+  setActiveNavItem(index: number) {
+    this.activeNavItem = index;
   }
 }

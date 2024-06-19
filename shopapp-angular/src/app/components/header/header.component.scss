@@ -28,6 +28,11 @@
   color: white !important;
 }
 
+.nav-item.active {
+  background-color: $shopapp-color !important;
+  color: white !important;
+}
+
 .popover-list {
   padding: 10px;
 }
