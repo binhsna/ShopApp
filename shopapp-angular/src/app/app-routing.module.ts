@@ -9,21 +9,43 @@ import {RouterModule, Routes} from "@angular/router";
 import {AdminComponent} from "./components/admin/admin.component";
 import {AuthGuardFn} from "./guards/auth.guard";
 import {AdminGuardFn} from "./guards/admin.guard";
+import {OrderAdminComponent} from "./components/admin/order/order.admin.component";
+import {ProductAdminComponent} from "./components/admin/product/product.admin.component";
+import {CategoryAdminComponent} from "./components/admin/category/category.admin.component";
 
 const routes: Routes = [
-  {path: '', component: HomeComponent},
-  {path: 'login', component: LoginComponent},
-  {path: 'admin', component: AdminComponent, canActivate: [AdminGuardFn]},
-  {path: 'register', component: RegisterComponent},
-  {path: 'products/:id', component: DetailProductComponent},
-  {path: 'orders', component: OrderComponent, canActivate: [AuthGuardFn]},
-  {path: 'user-profile', component: OrderComponent, canActivate: [AuthGuardFn]},
-  {path: 'orders/:id', component: OrderDetailComponent},
+    {path: '', component: HomeComponent},
+    {path: 'login', component: LoginComponent},
+    {path: 'register', component: RegisterComponent},
+    {path: 'products/:id', component: DetailProductComponent},
+    {path: 'orders', component: OrderComponent, canActivate: [AuthGuardFn]},
+    {path: 'user-profile', component: OrderComponent, canActivate: [AuthGuardFn]},
+    {path: 'order/:id', component: OrderDetailComponent},
+    // Admin
+    {
+        path: 'admin',
+        component: AdminComponent,
+        canActivate: [AdminGuardFn]
+    },
+    {
+        path: 'admin/category',
+        component: CategoryAdminComponent,
+        canActivate: [AdminGuardFn]
+    }, {
+        path: 'admin/product',
+        component: ProductAdminComponent,
+        canActivate: [AdminGuardFn]
+    }, {
+        path: 'admin/order',
+        component: OrderAdminComponent,
+        canActivate: [AdminGuardFn]
+    },
+
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
+    imports: [RouterModule.forRoot(routes)],
+    exports: [RouterModule],
 })
 export class AppRoutingModule {
 }

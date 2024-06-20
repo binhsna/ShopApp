@@ -12,52 +12,59 @@ import {FormsModule} from "@angular/forms";
 import {ReactiveFormsModule} from "@angular/forms";
 
 import {
-  HttpClientModule,
-  HTTP_INTERCEPTORS
+    HttpClientModule,
+    HTTP_INTERCEPTORS
 } from '@angular/common/http';
 import {TokenInterceptor} from "./interceptors/token.interceptor";
 import {AppComponent} from './app/app.component';
 import {AppRoutingModule} from "./app-routing.module";
 import {NgbPopover} from "@ng-bootstrap/ng-bootstrap";
 import {AdminComponent} from './components/admin/admin.component';
+import {OrderAdminComponent} from './components/admin/order/order.admin.component';
+import {ProductAdminComponent} from "./components/admin/product/product.admin.component";
+import {CategoryAdminComponent} from "./components/admin/category/category.admin.component";
 
 @NgModule({
-  declarations: [
-    HomeComponent,
-    HeaderComponent,
-    FooterComponent,
-    OrderComponent,
-    OrderDetailComponent,
-    LoginComponent,
-    RegisterComponent,
-    DetailProductComponent,
-    AppComponent,
-    AdminComponent
-  ],
-  imports: [
-    ReactiveFormsModule,
-    BrowserModule,
-    FormsModule,
-    HttpClientModule,
-    AppRoutingModule,
-    NgbPopover,
-  ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: TokenInterceptor,
-      multi: true,
-    },
-  ],
-  bootstrap: [
-    AppComponent,
-    //HomeComponent,
-    //OrderComponent,
-    //OrderDetailComponent,
-    //LoginComponent,
-    //DetailProductComponent,
-    //RegisterComponent,
-  ]
+    declarations: [
+        HomeComponent,
+        HeaderComponent,
+        FooterComponent,
+        OrderComponent,
+        OrderDetailComponent,
+        LoginComponent,
+        RegisterComponent,
+        DetailProductComponent,
+        AppComponent,
+        // Admin
+        AdminComponent,
+        CategoryAdminComponent,
+        ProductAdminComponent,
+        OrderAdminComponent,
+    ],
+    imports: [
+        ReactiveFormsModule,
+        BrowserModule,
+        FormsModule,
+        HttpClientModule,
+        AppRoutingModule,
+        NgbPopover,
+    ],
+    providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: TokenInterceptor,
+            multi: true,
+        },
+    ],
+    bootstrap: [
+        AppComponent,
+        //HomeComponent,
+        //OrderComponent,
+        //OrderDetailComponent,
+        //LoginComponent,
+        //DetailProductComponent,
+        //RegisterComponent,
+    ]
 })
 export class AppModule {
 }

@@ -1,0 +1,38 @@
+@import '../../../styles/shared-styles';
+
+.page-number {
+  cursor: pointer;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  margin: 0 2px;
+  border-radius: 3px;
+}
+
+.page-number.active {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+.btn-primary {
+  background-color: $shopapp-color;
+  border-color: $shopapp-color;
+}
+
+.btn.btn-primary {
+  margin-left: 10px;
+}
+
+.container-fluid {
+  background-color: white;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  height: 100vh;
+}
+
+.product-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 5px;
+  margin-right: 10px;
+}

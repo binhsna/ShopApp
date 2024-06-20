@@ -1,17 +1,17 @@
 import {Component, OnInit} from '@angular/core';
-import {environment} from "../../environments/environment";
-import {ProductService} from "../../services/product.service";
-import {Product} from "../../models/product";
-import {Category} from "../../models/category";
-import {CategoryService} from "../../services/category.service";
 import {Router} from "@angular/router";
+import {Product} from "../../../models/product";
+import {Category} from "../../../models/category";
+import {ProductService} from "../../../services/product.service";
+import {CategoryService} from "../../../services/category.service";
+import {environment} from "../../../environments/environment";
 
 @Component({
-    selector: 'app-home',
-    templateUrl: './home.component.html',
-    styleUrls: ['./home.component.scss']
+    selector: 'app-product-admin',
+    templateUrl: './product.admin.component.html',
+    styleUrls: ['./product.admin.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class ProductAdminComponent implements OnInit {
     products: Product[] = [];
     categories: Category[] = []; // Dữ liệu đọng từ CategoryService
     selectedCategoryId: number = 0; // Giá trị category được chọn
@@ -52,7 +52,7 @@ export class HomeComponent implements OnInit {
         this.getProducts(this.keyword, this.selectedCategoryId, this.currentPage, this.itemsPerPage);
     }
 
-    getProducts(keyword: string, selectedCategoryId: number, page: number, limit: number) {
+    private getProducts(keyword: string, selectedCategoryId: number, page: number, limit: number) {
         this.productService.getProducts(keyword, selectedCategoryId, page, limit).subscribe({
             next: (response: any) => {
                 debugger;
@@ -98,5 +98,9 @@ export class HomeComponent implements OnInit {
         debugger;
         // Điều hướng đến trang detail-product với productId là tham số
         this.router.navigate(['/products', productId]);
+    }
+
+    deleteProduct(productId: number) {
+
     }
 }

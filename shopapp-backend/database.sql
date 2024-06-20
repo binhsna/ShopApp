@@ -103,3 +103,6 @@ CREATE TABLE order_details(
     total_money FLOAT CHECK(total_money >= 0),
     color VARCHAR(20) DEFAULT ''
 );
+/*
+ UPDATE products SET price = ROUND(price / 1000000, 1) WHERE price > 1000000;
+*/
