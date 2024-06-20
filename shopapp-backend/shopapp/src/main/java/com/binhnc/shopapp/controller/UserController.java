@@ -11,13 +11,19 @@ import com.binhnc.shopapp.component.LocalizationUtils;
 import com.binhnc.shopapp.utils.MessageKeys;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("${api.prefix}/users")
@@ -26,6 +32,7 @@ public class UserController {
     private final IUserService userService;
     private final LocalizationUtils localizationUtils;
 
+    // Đăng ký
     @PostMapping("/register")
     public ResponseEntity<?> register(
             @Valid @RequestBody UserDTO userDTO,
@@ -63,6 +70,7 @@ public class UserController {
         }
     }
 
+    // Đăng nhập
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody UserLoginDTO userLoginDTO) {
@@ -88,17 +96,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/details")
-    public ResponseEntity<UserResponse> getUserDetails(@RequestHeader("Authorization") String authorizationHeader) {
-        try {
-            String extractedToken = authorizationHeader.substring(7); // Loại bỏ "Bearer " từ chuỗi token
-            User user = userService.getUserDetailsFromToken(extractedToken);
-            return ResponseEntity.ok(UserResponse.fromUser(user));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
+    // Update user
     @PutMapping("/details/{userId}")
     public ResponseEntity<UserResponse> updateUserDetails(
             @PathVariable Long userId,
@@ -117,4 +115,51 @@ public class UserController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    // Get user with token
+    @PostMapping("/details")
+    public ResponseEntity<UserResponse> getUserDetails(@RequestHeader("Authorization") String authorizationHeader) {
+        try {
+            String extractedToken = authorizationHeader.substring(7); // Loại bỏ "Bearer " từ chuỗi token
+            User user = userService.getUserDetailsFromToken(extractedToken);
+            return ResponseEntity.ok(UserResponse.fromUser(user));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping("/reset-password")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> resetPassword() {
+        // Continue
+        return ResponseEntity.ok().build();
+    }
+
+    // Get All User (ADMIN)
+    @GetMapping("")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> getAllUser(
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "0", name = "page") int page,
+            @RequestParam(defaultValue = "10", name = "limit") int limit
+    ) {
+        try {
+            // Tạo PageRequest từ thông tin trang và giới hạn
+            PageRequest pageRequest = PageRequest.of(
+                    page - 1, limit,
+                    Sort.by("id").ascending());
+            Page<UserResponse> userPage = userService.findAll(keyword, pageRequest)
+                    .map(UserResponse::fromUser);
+            int totalPages = userPage.getTotalPages();
+            List<UserResponse> userResponses = userPage.getContent();
+            return ResponseEntity.ok(UserListResponse.builder()
+                    .users(userResponses)
+                    .totalPages(totalPages)
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
 }

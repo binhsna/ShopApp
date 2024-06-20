@@ -7,6 +7,7 @@ import com.binhnc.shopapp.dto.UserDTO;
 import com.binhnc.shopapp.exception.DataNotFoundException;
 import com.binhnc.shopapp.exception.PermissionDenyException;
 import com.binhnc.shopapp.model.Role;
+import com.binhnc.shopapp.model.Token;
 import com.binhnc.shopapp.model.User;
 import com.binhnc.shopapp.repository.RoleRepository;
 import com.binhnc.shopapp.repository.UserRepository;
@@ -14,6 +15,9 @@ import com.binhnc.shopapp.utils.MessageKeys;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -149,5 +153,22 @@ public class UserService implements IUserService {
             existingUser.setPassword(enCodedPassword);
         }
         return userRepository.save(existingUser);
+    }
+
+    @Override
+    public Page<User> findAll(@Param("keyword") String keyword, Pageable pageable) throws Exception {
+        return userRepository.findAll(keyword, pageable);
+    }
+
+    @Override
+    @Transactional
+    public void resetPassword(Long userId, String newPassword) throws Exception {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User not found"));
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        existingUser.setPassword(encodedPassword);
+        userRepository.save(existingUser);
+        // reset password => clear token
+        //...
     }
 }
