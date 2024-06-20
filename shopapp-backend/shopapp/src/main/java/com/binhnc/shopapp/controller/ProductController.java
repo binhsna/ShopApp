@@ -5,13 +5,18 @@ import com.binhnc.shopapp.dto.ProductDTO;
 import com.binhnc.shopapp.dto.ProductImageDTO;
 import com.binhnc.shopapp.model.Product;
 import com.binhnc.shopapp.model.ProductImage;
+import com.binhnc.shopapp.model.ProductListener;
 import com.binhnc.shopapp.response.MessageResponse;
 import com.binhnc.shopapp.response.ProductListResponse;
 import com.binhnc.shopapp.response.ProductResponse;
+import com.binhnc.shopapp.service.IProductRedisService;
 import com.binhnc.shopapp.service.IProductService;
 import com.binhnc.shopapp.utils.MessageKeys;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.javafaker.Faker;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
@@ -41,6 +46,9 @@ public class ProductController {
     private IProductService productService;
     @Autowired
     private LocalizationUtils localizationUtils;
+    @Autowired
+    private IProductRedisService productRedisService;
+    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     @GetMapping("")
     public ResponseEntity<ProductListResponse> getProducts(
@@ -48,19 +56,32 @@ public class ProductController {
             @RequestParam(defaultValue = "0", name = "category_id") Long categoryId,
             @RequestParam(defaultValue = "0", name = "page") int page,
             @RequestParam(defaultValue = "10", name = "limit") int limit
-    ) {
+    ) throws JsonProcessingException {
+        int totalPages = 0;
         // Tạo PageRequest từ thông tin trang và giới hạn
         PageRequest pageRequest = PageRequest.of(
                 page - 1, limit,
                 //Sort.by("createAt").descending())
                 Sort.by("id").ascending());
-        Page<ProductResponse> productsPage = productService.getAllProducts(keyword, categoryId, pageRequest);
-        // Lấy tổng số trang
-        int totalPages = productsPage.getTotalPages();
-        // Lấy ra danh sách product
-        List<ProductResponse> products = productsPage.getContent();
+        logger.info(String.format("keyword = %s, category_id = %d, page = %d, limit = %d",
+                keyword, categoryId, page, limit));
+        List<ProductResponse> productResponses = productRedisService
+                .getAllProducts(keyword, categoryId, pageRequest);
+        if (productResponses == null) {
+            Page<ProductResponse> productsPage = productService.getAllProducts(keyword, categoryId, pageRequest);
+            // Lấy tổng số trang
+            totalPages = productsPage.getTotalPages();
+            // Lấy ra danh sách product
+            productResponses = productsPage.getContent();
+            productRedisService.saveAllProducts(
+                    productResponses,
+                    keyword,
+                    categoryId,
+                    pageRequest
+            );
+        }
         return ResponseEntity.ok(ProductListResponse.builder()
-                .products(products)
+                .products(productResponses)
                 .totalPages(totalPages)
                 .build());
     }
