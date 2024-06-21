@@ -5,7 +5,6 @@ import com.binhnc.shopapp.dto.ProductDTO;
 import com.binhnc.shopapp.dto.ProductImageDTO;
 import com.binhnc.shopapp.model.Product;
 import com.binhnc.shopapp.model.ProductImage;
-import com.binhnc.shopapp.model.ProductListener;
 import com.binhnc.shopapp.response.MessageResponse;
 import com.binhnc.shopapp.response.ProductListResponse;
 import com.binhnc.shopapp.response.ProductResponse;

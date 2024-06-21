@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Value;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 // Bộ lọc cho mỗi request
 @Component
@@ -68,24 +70,47 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private boolean isBypassToken(@NonNull HttpServletRequest request) {
         // Các request được cho phép đi qua
         final List<Pair<String, String>> bypassTokens = Arrays.asList(
+                // Health check request, không yêu cầu JWT token
+                Pair.of(String.format("%s/health-check/health", apiPrefix), "GET"),
+                Pair.of(String.format("%s/actuator/**", apiPrefix), "GET"),
+
                 Pair.of(String.format("%s/roles", apiPrefix), "GET"),
                 Pair.of(String.format("%s/products", apiPrefix), "GET"),
                 Pair.of(String.format("%s/categories", apiPrefix), "GET"),
                 Pair.of(String.format("%s/users/register", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/login", apiPrefix), "POST")
         );
-        // request orders check riêng
+        
         String requestPath = request.getServletPath();
         String requestMethod = request.getMethod();
         if (requestPath.equals(String.format("%s/orders", apiPrefix))
                 && requestMethod.equals("GET")) {
-            return true;
+            if (requestPath.matches(String.format("/%s/orders/\\d+", apiPrefix))) {
+                return true;
+            }
+            if (requestPath.equals(String.format("/%s/orders", apiPrefix))) {
+                return true;
+            }
         }
         for (Pair<String, String> bypassToken : bypassTokens) {
-            if (request.getServletPath().contains(bypassToken.getFirst()) &&
+            String tokenPath = bypassToken.getFirst();
+            String tokenMethod = bypassToken.getSecond();
+            if (tokenPath.contains("**")) {
+                String regexPath = tokenPath.replace("**", ".*");
+                Pattern pattern = Pattern.compile(regexPath);
+                Matcher matcher = pattern.matcher(requestPath);
+                if (matcher.matches() && requestMethod.equals(tokenMethod)) {
+                    return true;
+                }
+            } else if (requestPath.equals(tokenPath) && requestMethod.equals(tokenMethod)) {
+                return true;
+            }
+          /*
+           if (request.getServletPath().contains(bypassToken.getFirst()) &&
                     request.getMethod().equals(bypassToken.getSecond())) {
                 return true;
             }
+          */
         }
         return false;
     }
