@@ -78,14 +78,25 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/products", apiPrefix), "GET"),
                 Pair.of(String.format("%s/categories", apiPrefix), "GET"),
                 Pair.of(String.format("%s/users/register", apiPrefix), "POST"),
-                Pair.of(String.format("%s/users/login", apiPrefix), "POST")
+                Pair.of(String.format("%s/users/login", apiPrefix), "POST"),
+
+                // Swagger
+                Pair.of("/api-docs", "GET"),
+                Pair.of("/api-docs/**", "GET"),
+                Pair.of("/swagger-resources", "GET"),
+                Pair.of("/swagger-resources/**", "GET"),
+                Pair.of("/configuration/ui", "GET"),
+                Pair.of("/configuration/security", "GET"),
+                Pair.of("/swagger-ui/**", "GET"),
+                Pair.of("/swagger-ui.html", "GET"),
+                Pair.of("/swagger-ui/index.html", "GET")
         );
-        
+
         String requestPath = request.getServletPath();
         String requestMethod = request.getMethod();
-        if (requestPath.equals(String.format("%s/orders", apiPrefix))
+        if (requestPath.startsWith(String.format("%s/orders", apiPrefix))
                 && requestMethod.equals("GET")) {
-            if (requestPath.matches(String.format("/%s/orders/\\d+", apiPrefix))) {
+            if (requestPath.matches(apiPrefix + "/orders/\\d+")) {
                 return true;
             }
             if (requestPath.equals(String.format("/%s/orders", apiPrefix))) {

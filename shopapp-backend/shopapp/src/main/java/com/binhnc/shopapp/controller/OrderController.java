@@ -9,6 +9,8 @@ import com.binhnc.shopapp.response.OrderListResponse;
 import com.binhnc.shopapp.response.OrderResponse;
 import com.binhnc.shopapp.service.IOrderService;
 import com.binhnc.shopapp.utils.MessageKeys;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,6 +33,7 @@ public class OrderController {
     private final LocalizationUtils localizationUtils;
 
     @PostMapping("")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> createOrder(
             @Valid @RequestBody OrderDTO orderDTO,
             BindingResult result) {
@@ -70,6 +73,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     public ResponseEntity<?> getOrder(@Valid @PathVariable("id") Long orderId) {
         try {
             Order existingOrder = orderService.getOrderById(orderId);

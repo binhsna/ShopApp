@@ -8,9 +8,12 @@ import com.binhnc.shopapp.response.MessageResponse;
 import com.binhnc.shopapp.response.OrderDetailResponse;
 import com.binhnc.shopapp.service.IOrderDetailService;
 import com.binhnc.shopapp.utils.MessageKeys;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -87,6 +90,8 @@ public class OrderDetailController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     public ResponseEntity<?> deleteOrderDetail(@Valid @PathVariable("id") Long id) {
         try {
             orderDetailService.deleteById(id);

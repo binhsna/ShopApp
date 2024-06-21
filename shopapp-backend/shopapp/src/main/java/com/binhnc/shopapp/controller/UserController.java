@@ -9,6 +9,9 @@ import com.binhnc.shopapp.response.*;
 import com.binhnc.shopapp.service.IUserService;
 import com.binhnc.shopapp.component.LocalizationUtils;
 import com.binhnc.shopapp.utils.MessageKeys;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -98,6 +101,8 @@ public class UserController {
 
     // Update user
     @PutMapping("/details/{userId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     public ResponseEntity<UserResponse> updateUserDetails(
             @PathVariable Long userId,
             @RequestBody UpdateUserDTO updateUserDTO,
@@ -118,7 +123,10 @@ public class UserController {
 
     // Get user with token
     @PostMapping("/details")
-    public ResponseEntity<UserResponse> getUserDetails(@RequestHeader("Authorization") String authorizationHeader) {
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    public ResponseEntity<UserResponse> getUserDetails(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
         try {
             String extractedToken = authorizationHeader.substring(7); // Loại bỏ "Bearer " từ chuỗi token
             User user = userService.getUserDetailsFromToken(extractedToken);

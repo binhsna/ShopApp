@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.util.Pair;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -45,7 +46,20 @@ public class WebSecurityConfig {
                                     String.format("%s/users/login", apiPrefix),
                                     // Check healthy request
                                     String.format("%s/health-check/**", apiPrefix),
-                                    String.format("%s/actuator/**", apiPrefix)
+                                    String.format("%s/actuator/**", apiPrefix),
+
+                                    // Swagger
+                                    "/api-docs",
+                                    "/api-docs/**",
+                                    "/swagger-resources",
+                                    "/swagger-resources/**",
+                                    "/configuration/ui",
+                                    "/configuration/security",
+                                    "/swagger-ui/**",
+                                    "/swagger-ui.html",
+                                    "/webjars/swagger-ui/**",
+                                    "/swagger-ui/index.html"
+
                             )
                             .permitAll()
                             // Role
