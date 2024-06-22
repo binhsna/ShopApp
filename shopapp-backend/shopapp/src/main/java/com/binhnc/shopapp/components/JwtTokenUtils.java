@@ -1,7 +1,9 @@
 package com.binhnc.shopapp.components;
 
 import com.binhnc.shopapp.exceptions.InvalidParamException;
+import com.binhnc.shopapp.models.Token;
 import com.binhnc.shopapp.models.User;
+import com.binhnc.shopapp.repositories.TokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -27,6 +29,7 @@ public class JwtTokenUtils {
     private int expiration; // Save to an environment variable
     @Value("${jwt.secretKey}")
     private String secretKey;
+    private final TokenRepository tokenRepository;
 
     public String generateToken(User user) throws Exception {
         // Properties => claims: Thuộc tính
@@ -91,6 +94,10 @@ public class JwtTokenUtils {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         String phoneNumber = extractPhoneNumber(token);
+        Token existingToken = tokenRepository.findByToken(token);
+        if (existingToken == null || existingToken.isRevoked()) {
+            return false;
+        }
         return (phoneNumber.equals(userDetails.getUsername()))
                 && !isTokenExpired(token);
     }

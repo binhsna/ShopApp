@@ -6,11 +6,13 @@ import com.binhnc.shopapp.dtos.UserLoginDTO;
 import com.binhnc.shopapp.models.Role;
 import com.binhnc.shopapp.models.User;
 import com.binhnc.shopapp.responses.*;
+import com.binhnc.shopapp.services.token.ITokenService;
 import com.binhnc.shopapp.services.user.IUserService;
 import com.binhnc.shopapp.components.LocalizationUtils;
 import com.binhnc.shopapp.utils.MessageKeys;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,6 +33,7 @@ import java.util.List;
 public class UserController {
     private final IUserService userService;
     private final LocalizationUtils localizationUtils;
+    private final ITokenService tokenService;
 
     // Đăng ký
     @PostMapping("/register")
@@ -73,7 +76,9 @@ public class UserController {
     // Đăng nhập
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
-            @Valid @RequestBody UserLoginDTO userLoginDTO) {
+            @Valid @RequestBody UserLoginDTO userLoginDTO,
+            HttpServletRequest request
+    ) {
         // Kiểm tra thông tin đăng nhập và sinh token
         try {
             String token = userService.login(
@@ -81,6 +86,9 @@ public class UserController {
                     userLoginDTO.getPassword(),
                     userLoginDTO.getRoleId() == null ? Long.valueOf(Role.USER) : userLoginDTO.getRoleId()
             );
+            String userAgent = request.getHeader("User-Agent");
+            User user = userService.getUserDetailsFromToken(token);
+            tokenService.addToken(user, token, isMobileDevice(userAgent));
             // Trả về token trong responses
             return ResponseEntity.ok().body(
                     LoginResponse.builder()
@@ -94,6 +102,11 @@ public class UserController {
                             .build()
             );
         }
+    }
+
+    private boolean isMobileDevice(String userAgent) {
+        // Kiểm tra User-Agent header để xác định thiết bị di động
+        return userAgent.toLowerCase().contains("mobile");
     }
 
     // Update user

@@ -45,7 +45,7 @@ server:
 api:
   prefix: /api/v1
 jwt:
-  expiration: 2592000  # 30 days = 30 * 24 * 60 *60
+  expiration: 2592000  # 30 days = 30 * 24 * 60 * 60
   secretKey: 6QljiUkU0sXBCBy+YJ2YC4Sk/Lqjro/RNqQgGw5KLOI=
 
 logging:
