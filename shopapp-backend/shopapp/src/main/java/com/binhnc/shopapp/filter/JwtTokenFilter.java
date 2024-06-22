@@ -116,12 +116,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             } else if (requestPath.equals(tokenPath) && requestMethod.equals(tokenMethod)) {
                 return true;
             }
-          /*
-           if (request.getServletPath().contains(bypassToken.getFirst()) &&
+            if (request.getServletPath().contains(bypassToken.getFirst()) &&
                     request.getMethod().equals(bypassToken.getSecond())) {
                 return true;
             }
-          */
         }
         return false;
     }
