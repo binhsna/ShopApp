@@ -5,7 +5,6 @@ import {environment} from "../../environments/environment";
 import {ProductImage} from "../../models/product.image";
 import {CartService} from "../../services/cart.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {CategoryService} from "../../services/category.service";
 import {ProductDTO} from "../../dtos/product/product.dto";
 
 @Component({
@@ -18,11 +17,11 @@ export class DetailProductComponent implements OnInit {
   productId: number = 0;
   currentImageIndex: number = 0;
   quantity: number = 1;
+  isPressedAddToCart: boolean = false;
 
   constructor(
     private productService: ProductService,
     private cartService: CartService,
-    private categoryService: CategoryService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
   ) {
@@ -106,6 +105,7 @@ export class DetailProductComponent implements OnInit {
 
   addToCart(): void {
     debugger;
+    this.isPressedAddToCart = true;
     if (this.product) {
       this.cartService.addToCart(this.productId, this.quantity);
     } else {
@@ -125,6 +125,16 @@ export class DetailProductComponent implements OnInit {
 
   buyNow(): void {
     // Thực hiện xử lý khi người dùng muốn mua ngay
+    if (this.isPressedAddToCart == false) {
+      this.addToCart();
+    }
+    this.router.navigate(['/orders']);
+  }
 
+  getTotalPrice(): number {
+    if (this.product) {
+      return this.quantity * this.product.price;
+    }
+    return 0;
   }
 }

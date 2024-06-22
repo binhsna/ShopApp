@@ -8,6 +8,7 @@ import {TokenService} from "../../services/token.service";
 import {RoleService} from "../../services/role.service";
 import {Role} from "../../models/role";
 import {UserResponse} from "../../responses/user/user.response";
+import {CartService} from "../../services/cart.service";
 
 @Component({
   selector: 'app-login',
@@ -25,7 +26,7 @@ export class LoginComponent implements OnInit {
   // Login admin
   phoneNumber: string = "0971912776";
   password: string = "123";
-
+  showPassword: boolean = false;
   roles: Role[] = [];// Mảng roles
   rememberMe: boolean = true;
   selectedRole: Role | undefined; // Biến để lưu giá trị được chọn từ dropdown
@@ -36,6 +37,7 @@ export class LoginComponent implements OnInit {
     private userService: UserService,
     private tokenService: TokenService,
     private roleService: RoleService,
+    private cartService: CartService
   ) {
   }
 
@@ -100,10 +102,11 @@ export class LoginComponent implements OnInit {
                 } else if (this.userResponse?.role.name.toUpperCase().trim() == 'USER') {
                   this.router.navigate(['/']);
                 }
-                
+
               },
               complete: () => {
                 debugger;
+                this.cartService.refreshCart();
               }, error: (error: any) => {
                 alert(error?.error?.message)
               }

@@ -8,6 +8,7 @@ import {OrderDTO} from "../../dtos/order/order.dto";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {TokenService} from "../../services/token.service";
 import {ActivatedRoute, Router} from "@angular/router";
+import {HeaderComponent} from "../header/header.component";
 
 @Component({
   selector: 'app-order',
@@ -32,6 +33,7 @@ export class OrderComponent implements OnInit {
     coupon_code: '',
     cart_items: []
   };
+  private cart: Map<number, number> = new Map();
 
   constructor(
     private cartService: CartService,
@@ -59,8 +61,8 @@ export class OrderComponent implements OnInit {
     this.orderData.user_id = this.tokenService.getUserId();
     // Lấy ra danh sách sản phẩm từ giỏ hàng
     debugger;
-    const cart = this.cartService.getCart();
-    const productIds = Array.from(cart.keys());// Chuyển danh sách ID từ Map giỏ hàng
+    this.cart = this.cartService.getCart();
+    const productIds = Array.from(this.cart.keys());// Chuyển danh sách ID từ Map giỏ hàng
     // Gọi service để lấy thông tin sản phẩm dựa trên danh sách ID
     debugger;
     if (productIds.length === 0) {
@@ -78,7 +80,7 @@ export class OrderComponent implements OnInit {
           }
           return {
             product: product!,
-            quantity: cart.get(productId)!
+            quantity: this.cart.get(productId)!
           };
         });
       },
@@ -92,12 +94,39 @@ export class OrderComponent implements OnInit {
     });
   }
 
+  decreaseQuantity(index: number): void {
+    if (this.cartItems[index].quantity > 1) {
+      this.cartItems[index].quantity--;
+      // Cập nhật lại this.cart từ this.cartItems
+      this.updateCartFormCartItems();
+      this.calculateTotal();
+    }
+  }
+
+  increaseQuantity(index: number): void {
+    this.cartItems[index].quantity++;
+    // Cập nhật lại this.cart từ this.cartItems
+    this.updateCartFormCartItems();
+    this.calculateTotal();
+  }
+
   // Hàm tính tổng tiền
   calculateTotal() {
     this.totalAmount = this.cartItems
       .reduce((total, item) =>
         total + item.product.price * item.quantity, 0
       );
+  }
+
+  confirmDelete(index: number) {
+    if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
+      // Xóa sản phẩm khỏi danh sách cartItems
+      this.cartItems.splice(index, 1);
+      // Cập nhật lại this.cart từ this.cartItems
+      this.updateCartFormCartItems();
+      // Tính toán lại tổng tiền
+      this.calculateTotal();
+    }
   }
 
   // Hàm xử lý việc áp dụng mã giảm giá
@@ -152,5 +181,13 @@ export class OrderComponent implements OnInit {
       // Hiển thị thông báo lỗi hoặc khác
       alert("Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.");
     }
+  }
+
+  updateCartFormCartItems() {
+    this.cart.clear();
+    this.cartItems.forEach((item) => {
+      this.cart.set(item.product.id, item.quantity);
+    });
+    this.cartService.setCart(this.cart);
   }
 }
