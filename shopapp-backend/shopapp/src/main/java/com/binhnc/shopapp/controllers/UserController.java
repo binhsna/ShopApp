@@ -1,9 +1,11 @@
 package com.binhnc.shopapp.controllers;
 
+import com.binhnc.shopapp.dtos.RefreshTokenDTO;
 import com.binhnc.shopapp.dtos.UpdateUserDTO;
 import com.binhnc.shopapp.dtos.UserDTO;
 import com.binhnc.shopapp.dtos.UserLoginDTO;
 import com.binhnc.shopapp.models.Role;
+import com.binhnc.shopapp.models.Token;
 import com.binhnc.shopapp.models.User;
 import com.binhnc.shopapp.responses.*;
 import com.binhnc.shopapp.services.token.ITokenService;
@@ -88,12 +90,17 @@ public class UserController {
             );
             String userAgent = request.getHeader("User-Agent");
             User user = userService.getUserDetailsFromToken(token);
-            tokenService.addToken(user, token, isMobileDevice(userAgent));
+            Token jwtToken = tokenService.addToken(user, token, isMobileDevice(userAgent));
             // Trả về token trong responses
             return ResponseEntity.ok().body(
                     LoginResponse.builder()
                             .message(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_SUCCESSFULLY))
                             .token(token)
+                            .tokenType(jwtToken.getTokenType())
+                            .refreshToken(jwtToken.getRefreshToken())
+                            .username(user.getUsername())
+                            .roles(user.getAuthorities().stream().map(item -> item.getAuthority()).toList())
+                            .id(user.getId())
                             .build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
@@ -107,6 +114,33 @@ public class UserController {
     private boolean isMobileDevice(String userAgent) {
         // Kiểm tra User-Agent header để xác định thiết bị di động
         return userAgent.toLowerCase().contains("mobile");
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<LoginResponse> refreshToken(
+            @Valid @RequestBody RefreshTokenDTO refreshTokenDTO
+    ) {
+        try {
+            User userDetail = userService.getUserDetailsFromRefreshToken(refreshTokenDTO.getRefreshToken());
+            Token jwtToken = tokenService.refreshToken(refreshTokenDTO.getRefreshToken(), userDetail);
+            return ResponseEntity.ok(
+                    LoginResponse.builder()
+                            .message("Refresh token successfully")
+                            .token(jwtToken.getToken())
+                            .tokenType(jwtToken.getTokenType())
+                            .refreshToken(jwtToken.getRefreshToken())
+                            .username(userDetail.getUsername())
+                            .roles(userDetail.getAuthorities().stream().map(item -> item.getAuthority()).toList())
+                            .id(userDetail.getId())
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    LoginResponse.builder()
+                            .message(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_FAILED, e.getMessage()))
+                            .build()
+            );
+        }
     }
 
     // Update user

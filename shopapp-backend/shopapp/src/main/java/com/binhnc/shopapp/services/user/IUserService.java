@@ -21,5 +21,7 @@ public interface IUserService {
     Page<User> findAll(@Param("keyword") String keyword, Pageable pageable) throws Exception;
 
     void resetPassword(Long userId, String newPassword) throws Exception;
+
+    User getUserDetailsFromRefreshToken(String refreshToken) throws Exception;
 }
 

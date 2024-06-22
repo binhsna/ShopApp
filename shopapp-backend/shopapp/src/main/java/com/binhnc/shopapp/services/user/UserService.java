@@ -7,8 +7,10 @@ import com.binhnc.shopapp.dtos.UserDTO;
 import com.binhnc.shopapp.exceptions.DataNotFoundException;
 import com.binhnc.shopapp.exceptions.PermissionDenyException;
 import com.binhnc.shopapp.models.Role;
+import com.binhnc.shopapp.models.Token;
 import com.binhnc.shopapp.models.User;
 import com.binhnc.shopapp.repositories.RoleRepository;
+import com.binhnc.shopapp.repositories.TokenRepository;
 import com.binhnc.shopapp.repositories.UserRepository;
 import com.binhnc.shopapp.utils.MessageKeys;
 import jakarta.transaction.Transactional;
@@ -25,7 +27,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService {
@@ -35,6 +36,7 @@ public class UserService implements IUserService {
     private final JwtTokenUtils jwtTokenUtils;
     private final AuthenticationManager authenticationManager;
     private final LocalizationUtils localizationUtils;
+    private final TokenRepository tokenRepository;
 
     @Override
     public User createUser(UserDTO userDTO) throws Exception {
@@ -168,5 +170,11 @@ public class UserService implements IUserService {
         userRepository.save(existingUser);
         // reset password => clear token
         //...
+    }
+
+    @Override
+    public User getUserDetailsFromRefreshToken(String refreshToken) throws Exception {
+        Token existingToken = tokenRepository.findByRefreshToken(refreshToken);
+        return getUserDetailsFromToken(existingToken.getToken());
     }
 }
