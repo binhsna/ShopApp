@@ -10,6 +10,12 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
+      #ddl-auto: validate
+      #hibernate sẽ không tạo, sửa đổi hoặc xóa bất kỳ bảng nào
+      #validate thường được sử dụng trong môi trường production
+      #Nếu có sự khác biệt giữa cấu trúc database và các entity
+      #Lỗi sẽ được hiển thị và yêu cầu sửa đổi cấu trúc database một cách thủ công
+    
     properties:
       hibernate:
       dialect: org.hibernate.dialect.MySQL8Dialect
@@ -18,14 +24,22 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-  redis:
-    host: ${REDIS_HOST:localhost}
-    port: ${REDIS_PORT:6379}
   messages:
     basename: i18n/messages
     encoding: UTF-8
     default-locale: en
-#    port
+  # flyway -> Migration
+  # Đường dẫn tới thư mục chứa các script flyway
+  flyway:
+    locations: classpath:/db/migration,classpath:/dev/db/migration
+    # Phiên bản baseline sẽ là 1 và không thực hiện bất cứ thay đổi nào trong db
+    baseline-on-migrate: true
+    baseline-version: 0
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+# port
 server:
   port: 8080
 api:
