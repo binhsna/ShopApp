@@ -1,5 +1,6 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {JwtHelperService} from '@auth0/angular-jwt'
+import {DOCUMENT} from "@angular/common";
 
 @Injectable({
   providedIn: 'root'
@@ -7,20 +8,22 @@ import {JwtHelperService} from '@auth0/angular-jwt'
 export class TokenService {
   private readonly TOKEN_KEY = 'access_token';
   private jwtHelperService = new JwtHelperService();
+  localStorage?: Storage;
 
-  constructor() {
+  constructor(@Inject(DOCUMENT) document: Document) {
+    this.localStorage = document.defaultView?.localStorage;
   }
 
-  getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+  getToken(): string {
+    return this.localStorage?.getItem(this.TOKEN_KEY) ?? '';
   }
 
   setToken(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
+    this.localStorage?.setItem(this.TOKEN_KEY, token);
   }
 
   removeToken() {
-    localStorage.removeItem(this.TOKEN_KEY);
+    this.localStorage?.removeItem(this.TOKEN_KEY);
   }
 
   getUserId(): number {

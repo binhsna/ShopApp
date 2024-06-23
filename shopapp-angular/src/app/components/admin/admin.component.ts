@@ -22,15 +22,26 @@ export class AdminComponent implements OnInit {
 
     ngOnInit() {
         this.userResponse = this.userService.getUserResponseFromLocalStorage();
+        if (this.router.url === '/admin') {
+            this.router.navigate(['/admin/orders']);
+        }
     }
 
     logout() {
         this.userService.removeUserResponseFromLocalStorage();
         this.tokenService.removeToken();
         this.userResponse = this.userService.getUserResponseFromLocalStorage();
+        this.router.navigate(['/']);
     }
 
     showAdminComponent(componentName: string) {
-        this.adminComponent = componentName;
+        //this.adminComponent = componentName;
+        if (componentName === "orders") {
+            this.router.navigate(['/admin/orders']);
+        } else if (componentName === "categories") {
+            this.router.navigate(['/admin/categories']);
+        } else if (componentName === "products") {
+            this.router.navigate(['/admin/products']);
+        }
     }
 }

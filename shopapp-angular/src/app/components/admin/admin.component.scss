@@ -23,6 +23,7 @@
   color: white;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   padding: 10px 15px;
+
 }
 
 #sidebar a.active {
@@ -30,6 +31,7 @@
 }
 
 #sidebar a:hover {
+  cursor: pointer;
   background-color: #0056b3;
 }
 

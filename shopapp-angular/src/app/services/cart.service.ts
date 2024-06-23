@@ -1,6 +1,6 @@
-import {Injectable} from "@angular/core";
-import {ProductService} from "./product.service";
+import {Inject, Injectable} from "@angular/core";
 import {UserResponse} from "../responses/user/user.response";
+import {DOCUMENT} from "@angular/common";
 
 @Injectable({
   providedIn: 'root'
@@ -8,13 +8,15 @@ import {UserResponse} from "../responses/user/user.response";
 export class CartService {
   // Dùng Map để lưu trử giỏ hàng, key là id sản phẩm, value là số lượt
   private cart: Map<number, number> = new Map();
+  localStorage?: Storage;
   private myMap = new Map([
     ['key1', 'value1'],
     ['key2', 'value2'],
     ['key3', 'value3']
   ]);
 
-  constructor(private productService: ProductService) {
+  constructor(@Inject(DOCUMENT) document: Document) {
+    this.localStorage = document.defaultView?.localStorage;
     // Lấy dữ liệu giỏ hàng từ localStorage khi khởi tạo service
     debugger;
     this.refreshCart();
@@ -22,7 +24,7 @@ export class CartService {
 
   public refreshCart() {
     // Lấy dữ liệu giỏ hàng từ localStorage khi khởi tạo service
-    const storedCart = localStorage.getItem(this.getCartKey());
+    const storedCart = this.localStorage?.getItem(this.getCartKey());
     if (storedCart) {
       this.cart = new Map(JSON.parse(storedCart));
       /*
@@ -37,12 +39,9 @@ export class CartService {
   }
 
   private getCartKey(): string {
-    const userResponseJSON = localStorage.getItem("user");
+    const userResponseJSON = this.localStorage?.getItem("user");
     const userResponse: UserResponse = JSON.parse(userResponseJSON!);
-    if (userResponse) {
-      return `cart:${userResponse.id}`;
-    }
-    return '';
+    return `cart:${userResponse?.id ?? ''}`;
   }
 
   addToCart(productId: number, quantity: number = 1): void {
@@ -66,7 +65,7 @@ export class CartService {
 
   // Lưu trữ giỏ hàng vào localstorage
   private saveCartToLocalStorage(): void {
-    localStorage.setItem(this.getCartKey(), JSON.stringify(Array.from(this.cart.entries())));
+    this.localStorage?.setItem(this.getCartKey(), JSON.stringify(Array.from(this.cart.entries())));
   }
 
   setCart(cart: Map<number, number>) {

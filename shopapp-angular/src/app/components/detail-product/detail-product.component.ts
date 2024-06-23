@@ -36,7 +36,7 @@ export class DetailProductComponent implements OnInit {
       this.productId = +idParam;
     }
     if (!isNaN(this.productId)) {
-      this.productService.getProductDetailProduct(this.productId).subscribe({
+      this.productService.getProductById(this.productId).subscribe({
         next: (response: any) => {
           // Lấy danh sách ảnh sản phẩm và thay đổi URL
           debugger;

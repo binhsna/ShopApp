@@ -1,0 +1,69 @@
+<app-header></app-header>
+<form [formGroup]="userProfile">
+    <div class="row">
+        <div class="col-md-3 mx-auto">
+            <h2 class="user-info-header">Thông tin người dùng</h2>
+            <div class="mb-3">
+                <label for="fullname" class="form-label">Họ và tên</label>
+                <input type="text" class="form-control" placeholder="Họ và tên"
+                       formControlName="fullname"
+                       id="fullname" name="fullname"
+                       [class.is-invalid]="userProfile.get('fullname')!.invalid && userProfile.get('fullname')!.touched">
+                <div class="invalid-feedback"
+                     *ngIf="userProfile.get('fullname')!.invalid && userProfile.get('fullname')!.touched">
+                    Họ và tên là trường bắt buộc.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="address" class="form-label">Địa chỉ</label>
+                <input type="text" class="form-control" placeholder="Địa chỉ" required
+                       formControlName="address"
+                       name="address" id="address"
+                       [class.is-invalid]="userProfile.get('address')!.invalid && userProfile.get('address')!.touched">
+                <div class="invalid-feedback"
+                     *ngIf="userProfile.get('address')!.invalid && userProfile.get('address')!.touched">
+                    Địa chỉ ít nhất 5 ký tự.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="date_of_birth" class="form-label">Ngày sinh</label>
+                <input type="date" class="form-control" required
+                       formControlName="date_of_birth"
+                       name="date_of_birth" id="date_of_birth"
+                       [class.is-invalid]="userProfile.get('date_of_birth')!.invalid && userProfile.get('date_of_birth')!.touched">
+                <div class="invalid-feedback"
+                     *ngIf="userProfile.get('date_of_birth')!.invalid && userProfile.get('date_of_birth')!.touched">
+                    Nhập ngày sinh.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mật khẩu</label>
+                <input type="text" class="form-control" required
+                       formControlName="date_of_birth"
+                       name="password" id="password"
+                       [class.is-invalid]="userProfile.get('password')!.invalid && userProfile.get('password')!.touched">
+                <div class="invalid-feedback"
+                     *ngIf="userProfile.get('password')!.invalid && userProfile.get('password')!.touched">
+                    Nhập mật khẩu.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="retype_password" class="form-label">Nhập lại mật khẩu</label>
+                <input type="text" class="form-control" required
+                       formControlName="date_of_birth"
+                       name="retype_password" id="retype_password"
+                       [class.is-invalid]="userProfile.get('retype_password')!.invalid && userProfile.get('retype_password')!.touched">
+                <div class="invalid-feedback"
+                     *ngIf="userProfile.hasError('passwordMismatch')">
+                    Mật khẩu không khớp.
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="button" (click)="save()" class="btn btn-primary">
+                    Lưu thay đổi
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+<app-footer></app-footer>

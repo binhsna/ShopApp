@@ -1,0 +1,59 @@
+@import "../../styles/shared-styles.scss";
+
+.container {
+  height: 100vh;
+}
+
+.user-info-header {
+  text-align: center;
+  color: rgb(233, 66, 176);
+}
+
+label {
+  color: white;
+}
+
+.form-control {
+  background-color: transparent;
+  //border: none;
+  color: white;
+}
+
+.form-control:focus {
+  color: white;
+  background-color: transparent;
+  outline: none;
+  border-color: transparent;
+}
+
+.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: rgba(255, 255, 255, 0.4);
+  opacity: 1; /* Firefox */
+}
+
+.form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.form-control::-ms-input-placeholder { /* Microsoft Edge */
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  color: $shopapp-title-color;
+  cursor: pointer;
+}
+
+.form-check-input {
+  margin-right: 5px;
+}
+
+

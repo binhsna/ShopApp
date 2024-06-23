@@ -13,7 +13,7 @@ import {Router} from "@angular/router";
 })
 export class HomeComponent implements OnInit {
     products: Product[] = [];
-    categories: Category[] = []; // Dữ liệu đọng từ CategoryService
+    categories: Category[] = []; // Dữ liệu động từ CategoryService
     selectedCategoryId: number = 0; // Giá trị category được chọn
     currentPage: number = 1;
     itemsPerPage: number = 12;
@@ -28,6 +28,7 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.currentPage = Number(localStorage.getItem("currentProductPage")) || 1;
         this.getProducts(this.keyword, this.selectedCategoryId, this.currentPage, this.itemsPerPage);
         this.getCategories(1, 100);
     }
@@ -76,7 +77,8 @@ export class HomeComponent implements OnInit {
 
     onPageChange(page: number) {
         debugger;
-        this.currentPage = page;
+        this.currentPage = page < 1 ? 1 : page;
+        localStorage.setItem("currentProductPage", String(this.currentPage));
         this.getProducts(this.keyword, this.selectedCategoryId, this.currentPage, this.itemsPerPage);
     }
 

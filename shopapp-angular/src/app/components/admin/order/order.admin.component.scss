@@ -1,5 +1,16 @@
 @import '../../../styles/shared-styles';
 
+.search-box {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  margin-bottom: 5px;
+}
+
+.search-box input {
+  max-width: 50%;
+}
+
 .page-number {
   cursor: pointer;
   padding: 5px 10px;
@@ -21,6 +32,7 @@
 
 .btn.btn-primary {
   margin-left: 10px;
+  margin-right: 10px;
 }
 
 .container-fluid {
@@ -28,4 +40,8 @@
   padding-left: 0 !important;
   padding-right: 0 !important;
   height: 100vh;
+}
+
+.page-link {
+  cursor: pointer;
 }
