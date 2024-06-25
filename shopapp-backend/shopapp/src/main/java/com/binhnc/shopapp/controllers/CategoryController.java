@@ -2,8 +2,10 @@ package com.binhnc.shopapp.controllers;
 
 import com.binhnc.shopapp.dtos.CategoryDTO;
 import com.binhnc.shopapp.models.Category;
+import com.binhnc.shopapp.models.Product;
 import com.binhnc.shopapp.responses.ListMessageResponse;
 import com.binhnc.shopapp.responses.MessageResponse;
+import com.binhnc.shopapp.responses.ProductResponse;
 import com.binhnc.shopapp.responses.UpdateCategoryResponse;
 import com.binhnc.shopapp.services.category.ICategoryService;
 import com.binhnc.shopapp.components.LocalizationUtils;
@@ -11,6 +13,7 @@ import com.binhnc.shopapp.utils.MessageKeys;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -66,18 +69,35 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).body(categories);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCategoryById(@PathVariable("id") Long categoryId) {
+        try {
+            Category category = categoryService.getCategoryById(categoryId);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(category);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     // Update category
     @PutMapping("/{id}")
     public ResponseEntity<UpdateCategoryResponse> updateCategory(
             @PathVariable Long id,
             @Valid @RequestBody CategoryDTO categoryDTO) {
-        categoryService.updateCategory(id, categoryDTO);
-        return ResponseEntity.ok(
-                UpdateCategoryResponse.builder()
-                        .message(localizationUtils.getLocalizedMessage(MessageKeys.UPDATE_CATEGORY_SUCCESSFULLY))
-                        .build()
-        );
+        try {
+            categoryService.updateCategory(id, categoryDTO);
+            return ResponseEntity.ok(
+                    UpdateCategoryResponse.builder()
+                            .message(localizationUtils.getLocalizedMessage(MessageKeys.UPDATE_CATEGORY_SUCCESSFULLY))
+                            .build());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    UpdateCategoryResponse.builder()
+                            .message(localizationUtils.getLocalizedMessage(MessageKeys.UPDATE_CATEGORY_FAILED))
+                            .build());
+        }
     }
 
     // Delete category

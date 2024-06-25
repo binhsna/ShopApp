@@ -4,6 +4,8 @@ import com.binhnc.shopapp.dtos.RefreshTokenDTO;
 import com.binhnc.shopapp.dtos.UpdateUserDTO;
 import com.binhnc.shopapp.dtos.UserDTO;
 import com.binhnc.shopapp.dtos.UserLoginDTO;
+import com.binhnc.shopapp.exceptions.DataNotFoundException;
+import com.binhnc.shopapp.exceptions.InvalidPasswordException;
 import com.binhnc.shopapp.models.Role;
 import com.binhnc.shopapp.models.Token;
 import com.binhnc.shopapp.models.User;
@@ -28,6 +30,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("${api.prefix}/users")
@@ -180,11 +183,37 @@ public class UserController {
         }
     }
 
-    @PutMapping("/reset-password")
+    @PutMapping("/reset-password/{userId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> resetPassword() {
-        // Continue
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> resetPassword(@Valid @PathVariable("userId") Long userId) {
+        try {
+            String newPassword = UUID.randomUUID().toString().substring(0, 5);
+            userService.resetPassword(userId, newPassword);
+            return ResponseEntity.ok(newPassword);
+        } catch (InvalidPasswordException e) {
+            return ResponseEntity.badRequest().body("Invalid password");
+        } catch (DataNotFoundException e) {
+            return ResponseEntity.badRequest().body("User not found");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/block/{userId}/{active}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> blockOrEnable(
+            @Valid @PathVariable("userId") Long userId,
+            @Valid @PathVariable("active") int active
+    ) {
+        try {
+            userService.blockOrEnable(userId, active > 0);
+            String message = active > 0 ? "Successfully enabled the user." : "Successfully blocked the user.";
+            return ResponseEntity.ok().body(message);
+        } catch (DataNotFoundException e) {
+            return ResponseEntity.badRequest().body("User not found.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // Get All User (ADMIN)

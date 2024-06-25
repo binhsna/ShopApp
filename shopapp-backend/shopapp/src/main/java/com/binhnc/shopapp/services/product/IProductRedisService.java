@@ -21,5 +21,4 @@ public interface IProductRedisService {
                          Long categoryId,
                          PageRequest pageRequest
     ) throws JsonProcessingException;
-
 }

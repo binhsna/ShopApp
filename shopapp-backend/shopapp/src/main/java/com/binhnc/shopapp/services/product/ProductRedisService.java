@@ -18,7 +18,7 @@ public class ProductRedisService implements IProductRedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper redisObjectMapper;
 
-    private String getKeyForm(String keyword,
+    private String getKeyFrom(String keyword,
                               Long categoryId,
                               PageRequest pageRequest) {
         int pageNumber = pageRequest.getPageNumber();
@@ -43,7 +43,7 @@ public class ProductRedisService implements IProductRedisService {
             Long categoryId,
             PageRequest pageRequest
     ) throws JsonProcessingException {
-        String key = this.getKeyForm(keyword, categoryId, pageRequest);
+        String key = this.getKeyFrom(keyword, categoryId, pageRequest);
         String json = (String) redisTemplate.opsForValue().get(key);
         List<ProductResponse> productResponses =
                 json != null ?
@@ -65,9 +65,8 @@ public class ProductRedisService implements IProductRedisService {
                                 Long categoryId,
                                 PageRequest pageRequest
     ) throws JsonProcessingException {
-        String key = this.getKeyForm(keyword, categoryId, pageRequest);
+        String key = this.getKeyFrom(keyword, categoryId, pageRequest);
         String json = redisObjectMapper.writeValueAsString(productResponses);
         redisTemplate.opsForValue().set(key, json);
     }
-
 }

@@ -5,6 +5,7 @@ import com.binhnc.shopapp.components.LocalizationUtils;
 import com.binhnc.shopapp.dtos.UpdateUserDTO;
 import com.binhnc.shopapp.dtos.UserDTO;
 import com.binhnc.shopapp.exceptions.DataNotFoundException;
+import com.binhnc.shopapp.exceptions.InvalidPasswordException;
 import com.binhnc.shopapp.exceptions.PermissionDenyException;
 import com.binhnc.shopapp.models.Role;
 import com.binhnc.shopapp.models.Token;
@@ -25,6 +26,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -57,6 +59,7 @@ public class UserService implements IUserService {
                 .phoneNumber(userDTO.getPhoneNumber())
                 .password(userDTO.getPassword())
                 .address(userDTO.getAddress())
+                .active(true) // Có thể cho xác nhận email -> set active
                 .dateOfBirth(userDTO.getDateOfBirth())
                 .facebookAccountId(userDTO.getFacebookAccountId())
                 .googleAccountId(userDTO.getGoogleAccountId())
@@ -90,6 +93,9 @@ public class UserService implements IUserService {
         Optional<Role> optionalRole = roleRepository.findById(roleId);
         if (optionalRole.isEmpty() || !roleId.equals(existingUser.getRole().getId())) {
             throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.ROLE_DOES_NOT_EXISTS));
+        }
+        if (!optionalUser.get().isActive()) {
+            throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.USER_IS_LOCKED));
         }
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 phoneNumber, password, existingUser.getAuthorities()
@@ -162,14 +168,26 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public void resetPassword(Long userId, String newPassword) throws Exception {
+    public void resetPassword(Long userId, String newPassword) throws InvalidPasswordException, DataNotFoundException {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new DataNotFoundException("User not found"));
         String encodedPassword = passwordEncoder.encode(newPassword);
         existingUser.setPassword(encodedPassword);
         userRepository.save(existingUser);
         // reset password => clear token
-        //...
+        List<Token> tokens = tokenRepository.findByUser(existingUser);
+        for (Token token : tokens) {
+            tokenRepository.delete(token);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void blockOrEnable(Long userId, boolean active) throws DataNotFoundException {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User not found"));
+        existingUser.setActive(active);
+        userRepository.save(existingUser);
     }
 
     @Override

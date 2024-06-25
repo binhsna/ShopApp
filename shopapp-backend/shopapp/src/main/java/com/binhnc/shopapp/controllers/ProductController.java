@@ -64,21 +64,24 @@ public class ProductController {
                 Sort.by("id").ascending());
         logger.info(String.format("keyword = %s, category_id = %d, page = %d, limit = %d",
                 keyword, categoryId, page, limit));
-        List<ProductResponse> productResponses = productRedisService
+        List<ProductResponse> productResponses = new ArrayList<>();
+        /*
+        productResponses = productRedisService
                 .getAllProducts(keyword, categoryId, pageRequest);
-        if (productResponses == null) {
-            Page<ProductResponse> productsPage = productService.getAllProducts(keyword, categoryId, pageRequest);
-            // Lấy tổng số trang
-            totalPages = productsPage.getTotalPages();
-            // Lấy ra danh sách product
-            productResponses = productsPage.getContent();
-            productRedisService.saveAllProducts(
-                    productResponses,
-                    keyword,
-                    categoryId,
-                    pageRequest
-            );
-        }
+        */
+        //if (productResponses == null) {
+        Page<ProductResponse> productsPage = productService.getAllProducts(keyword, categoryId, pageRequest);
+        // Lấy tổng số trang
+        totalPages = productsPage.getTotalPages();
+        // Lấy ra danh sách product
+        productResponses = productsPage.getContent();
+        productRedisService.saveAllProducts(
+                productResponses,
+                keyword,
+                categoryId,
+                pageRequest
+        );
+        //  }
         return ResponseEntity.ok(ProductListResponse.builder()
                 .products(productResponses)
                 .totalPages(totalPages)
@@ -138,11 +141,10 @@ public class ProductController {
         }
     }
 
-    @PostMapping(value = "uploads/{id}",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping("uploads/{id}")
     public ResponseEntity<?> uploadImages(
             @PathVariable("id") Long productId,
-            @ModelAttribute("files") List<MultipartFile> files) {
+            @RequestParam("files") List<MultipartFile> files) {
         try {
             Product existingProduct = productService.getProductById(productId);
             files = files == null ? new ArrayList<MultipartFile>() : files;

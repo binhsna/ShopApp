@@ -3,6 +3,8 @@ package com.binhnc.shopapp.services.user;
 
 import com.binhnc.shopapp.dtos.UpdateUserDTO;
 import com.binhnc.shopapp.dtos.UserDTO;
+import com.binhnc.shopapp.exceptions.DataNotFoundException;
+import com.binhnc.shopapp.exceptions.InvalidPasswordException;
 import com.binhnc.shopapp.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,8 +22,11 @@ public interface IUserService {
 
     Page<User> findAll(@Param("keyword") String keyword, Pageable pageable) throws Exception;
 
-    void resetPassword(Long userId, String newPassword) throws Exception;
 
     User getUserDetailsFromRefreshToken(String refreshToken) throws Exception;
+
+    void resetPassword(Long userId, String newPassword) throws InvalidPasswordException, DataNotFoundException;
+
+    void blockOrEnable(Long userId, boolean active) throws DataNotFoundException;
 }
 
