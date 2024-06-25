@@ -106,3 +106,24 @@ CREATE TABLE order_details(
 /*
  UPDATE products SET price = ROUND(price / 1000000, 1) WHERE price > 1000000;
 */
+/*
+INSERT INTO coupons(id, code) VALUES (1,'HEAVEN');
+INSERT INTO coupons(id, code) VALUES (2,'DISCOUNT20');
+
+INSERT INTO coupon_conditions(id, coupon_id, attribute, operator, value, discount_amount)
+VALUES (1,1,'minimum_amount','>','100',10);
+
+INSERT INTO coupon_conditions(id, coupon_id, attribute, operator, value, discount_amount)
+VALUES (2,1,'applicable_date','BETWEEN','2024-12-28',5);
+
+INSERT INTO coupon_conditions(id, coupon_id, attribute, operator, value, discount_amount)
+VALUES (3,1,'minimum_amount','>','200',20);
+
+Nếu đơn hàng có tổng giá trị là 120 dollar và áp dụng coupon 1
+Giá trị đơn hàng sau khi áp dụng giảm 10%:
+120 * (1 - 10/100) = 108 dollar
+
+Giá trị sau khi áp dụng giảm giá 5%:
+108 * 0.95 = 102.6 dollar
+...
+*/

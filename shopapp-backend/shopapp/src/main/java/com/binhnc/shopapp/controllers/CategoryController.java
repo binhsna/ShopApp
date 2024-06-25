@@ -2,11 +2,9 @@ package com.binhnc.shopapp.controllers;
 
 import com.binhnc.shopapp.dtos.CategoryDTO;
 import com.binhnc.shopapp.models.Category;
-import com.binhnc.shopapp.models.Product;
 import com.binhnc.shopapp.responses.ListMessageResponse;
 import com.binhnc.shopapp.responses.MessageResponse;
-import com.binhnc.shopapp.responses.ProductResponse;
-import com.binhnc.shopapp.responses.UpdateCategoryResponse;
+import com.binhnc.shopapp.responses.category.UpdateCategoryResponse;
 import com.binhnc.shopapp.services.category.ICategoryService;
 import com.binhnc.shopapp.components.LocalizationUtils;
 import com.binhnc.shopapp.utils.MessageKeys;

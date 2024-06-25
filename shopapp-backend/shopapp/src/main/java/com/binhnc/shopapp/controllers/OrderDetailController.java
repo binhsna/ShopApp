@@ -5,7 +5,7 @@ import com.binhnc.shopapp.dtos.OrderDetailDTO;
 import com.binhnc.shopapp.models.OrderDetail;
 import com.binhnc.shopapp.responses.ListMessageResponse;
 import com.binhnc.shopapp.responses.MessageResponse;
-import com.binhnc.shopapp.responses.OrderDetailResponse;
+import com.binhnc.shopapp.responses.order.OrderDetailResponse;
 import com.binhnc.shopapp.services.orderdetail.IOrderDetailService;
 import com.binhnc.shopapp.utils.MessageKeys;
 import io.swagger.v3.oas.annotations.Operation;

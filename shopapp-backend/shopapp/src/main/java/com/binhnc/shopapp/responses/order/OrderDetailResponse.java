@@ -1,4 +1,4 @@
-package com.binhnc.shopapp.responses;
+package com.binhnc.shopapp.responses.order;
 
 import com.binhnc.shopapp.models.OrderDetail;
 import com.fasterxml.jackson.annotation.JsonProperty;

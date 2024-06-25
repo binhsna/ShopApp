@@ -8,7 +8,7 @@ import com.binhnc.shopapp.models.User;
 import com.binhnc.shopapp.repositories.CommentRepository;
 import com.binhnc.shopapp.repositories.ProductRepository;
 import com.binhnc.shopapp.repositories.UserRepository;
-import com.binhnc.shopapp.responses.CommentResponse;
+import com.binhnc.shopapp.responses.comment.CommentResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

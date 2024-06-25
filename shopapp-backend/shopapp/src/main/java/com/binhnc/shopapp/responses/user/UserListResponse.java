@@ -1,4 +1,4 @@
-package com.binhnc.shopapp.responses;
+package com.binhnc.shopapp.responses.user;
 
 import lombok.*;
 

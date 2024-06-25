@@ -5,7 +5,7 @@ import com.binhnc.shopapp.dtos.ProductDTO;
 import com.binhnc.shopapp.dtos.ProductImageDTO;
 import com.binhnc.shopapp.models.Product;
 import com.binhnc.shopapp.models.ProductImage;
-import com.binhnc.shopapp.responses.ProductResponse;
+import com.binhnc.shopapp.responses.product.ProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 

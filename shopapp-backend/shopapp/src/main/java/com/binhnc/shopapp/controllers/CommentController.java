@@ -2,7 +2,7 @@ package com.binhnc.shopapp.controllers;
 
 import com.binhnc.shopapp.dtos.CommentDTO;
 import com.binhnc.shopapp.models.User;
-import com.binhnc.shopapp.responses.CommentResponse;
+import com.binhnc.shopapp.responses.comment.CommentResponse;
 import com.binhnc.shopapp.services.comment.ICommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -8,7 +8,7 @@ import com.binhnc.shopapp.repositories.OrderDetailRepository;
 import com.binhnc.shopapp.repositories.OrderRepository;
 import com.binhnc.shopapp.repositories.ProductRepository;
 import com.binhnc.shopapp.repositories.UserRepository;
-import com.binhnc.shopapp.responses.OrderResponse;
+import com.binhnc.shopapp.responses.order.OrderResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

@@ -3,7 +3,7 @@ package com.binhnc.shopapp.services.comment;
 import com.binhnc.shopapp.dtos.CommentDTO;
 import com.binhnc.shopapp.exceptions.DataNotFoundException;
 import com.binhnc.shopapp.models.Comment;
-import com.binhnc.shopapp.responses.CommentResponse;
+import com.binhnc.shopapp.responses.comment.CommentResponse;
 
 import java.util.List;
 

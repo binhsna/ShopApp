@@ -10,7 +10,7 @@ import com.binhnc.shopapp.models.ProductImage;
 import com.binhnc.shopapp.repositories.CategoryRepository;
 import com.binhnc.shopapp.repositories.ProductImageRepository;
 import com.binhnc.shopapp.repositories.ProductRepository;
-import com.binhnc.shopapp.responses.ProductResponse;
+import com.binhnc.shopapp.responses.product.ProductResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,7 +35,7 @@ public class ProductService implements IProductService {
                     .findById(productDTO.getCategoryId())
                     .orElseThrow(() ->
                             new DataNotFoundException(
-                                    "Cannot find category with id: " + productDTO.getCategoryId()));
+                                    "Cannot find product with id: " + productDTO.getCategoryId()));
             Product newProduct = Product.builder()
                     .name(productDTO.getName())
                     .price(productDTO.getPrice())
@@ -80,7 +80,7 @@ public class ProductService implements IProductService {
                     .findById(productDTO.getCategoryId())
                     .orElseThrow(() ->
                             new DataNotFoundException(
-                                    "Cannot find category with id: " + productDTO.getCategoryId()));
+                                    "Cannot find product with id: " + productDTO.getCategoryId()));
             if (productDTO.getName() != null &&
                     !productDTO.getName().isEmpty()) {
                 existingProduct.setName(productDTO.getName());

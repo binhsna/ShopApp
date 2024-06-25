@@ -1,7 +1,8 @@
-package com.binhnc.shopapp.responses;
+package com.binhnc.shopapp.responses.product;
 
 import com.binhnc.shopapp.models.Product;
 import com.binhnc.shopapp.models.ProductImage;
+import com.binhnc.shopapp.responses.BaseResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 

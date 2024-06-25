@@ -1,6 +1,6 @@
 package com.binhnc.shopapp.services.product;
 
-import com.binhnc.shopapp.responses.ProductResponse;
+import com.binhnc.shopapp.responses.product.ProductResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

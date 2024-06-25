@@ -1,4 +1,4 @@
-package com.binhnc.shopapp.responses;
+package com.binhnc.shopapp.responses.order;
 
 import com.binhnc.shopapp.models.Order;
 import com.binhnc.shopapp.models.OrderDetail;
