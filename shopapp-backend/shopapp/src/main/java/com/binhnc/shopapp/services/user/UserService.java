@@ -4,6 +4,7 @@ import com.binhnc.shopapp.components.JwtTokenUtils;
 import com.binhnc.shopapp.components.LocalizationUtils;
 import com.binhnc.shopapp.dtos.UpdateUserDTO;
 import com.binhnc.shopapp.dtos.UserDTO;
+import com.binhnc.shopapp.dtos.UserLoginDTO;
 import com.binhnc.shopapp.exceptions.DataNotFoundException;
 import com.binhnc.shopapp.exceptions.InvalidPasswordException;
 import com.binhnc.shopapp.exceptions.PermissionDenyException;
@@ -41,22 +42,25 @@ public class UserService implements IUserService {
     private final TokenRepository tokenRepository;
 
     @Override
+    @Transactional
     public User createUser(UserDTO userDTO) throws Exception {
         // Register user
-        String phoneNumber = userDTO.getPhoneNumber();
-        // Kiểm tra xem số điện thoại đã tồn tại hay chưa
-        if (userRepository.existsByPhoneNumber(phoneNumber)) {
+        if (!userDTO.getPhoneNumber().isBlank() && userRepository.existsByPhoneNumber(userDTO.getPhoneNumber())) {
             throw new DataIntegrityViolationException("Phone number already exists");
         }
+        if (!userDTO.getEmail().isBlank() && userRepository.existsByEmail(userDTO.getEmail())) {
+            throw new DataIntegrityViolationException("Email already exists");
+        }
         Role role = roleRepository.findById(userDTO.getRoleId())
-                .orElseThrow(() -> new DataNotFoundException(("Role not found")));
-        if (role.getName().toLowerCase().equals(Role.ADMIN)) {
+                .orElseThrow(() -> new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.ROLE_DOES_NOT_EXISTS)));
+        if (role.getName().equalsIgnoreCase(Role.ADMIN)) {
             throw new PermissionDenyException("You cannot register an admin account");
         }
         // Convert from userDTO => user
         User newUser = User.builder()
                 .fullName(userDTO.getFullName())
                 .phoneNumber(userDTO.getPhoneNumber())
+                .email(userDTO.getEmail())
                 .password(userDTO.getPassword())
                 .address(userDTO.getAddress())
                 .active(true) // Có thể cho xác nhận email -> set active
@@ -75,30 +79,43 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public String login(String phoneNumber, String password, Long roleId) throws Exception {
+    public String login(UserLoginDTO userLoginDTO) throws Exception {
         // spring security
-        Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
+        Optional<User> optionalUser = Optional.empty();
+        String subject = null;
+        if (userLoginDTO.getPhoneNumber() != null && !userLoginDTO.getPhoneNumber().isBlank()) {
+            optionalUser = userRepository.findByPhoneNumber(userLoginDTO.getPhoneNumber());
+            subject = userLoginDTO.getPhoneNumber();
+        }
+        if (optionalUser.isEmpty() && userLoginDTO.getEmail() != null) {
+            optionalUser = userRepository.findByEmail(userLoginDTO.getEmail());
+            subject = userLoginDTO.getEmail();
+        }
+
         if (optionalUser.isEmpty()) {
             throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.WRONG_PHONE_PASSWORD));
         }
+
         // return optionalUser.get(); // Trả về JWT token?
         User existingUser = optionalUser.get();
         // Check password
         if (existingUser.getFacebookAccountId() == 0
                 && existingUser.getGoogleAccountId() == 0) {
-            if (!passwordEncoder.matches(password, existingUser.getPassword())) {
+            if (!passwordEncoder.matches(userLoginDTO.getPassword(), existingUser.getPassword())) {
                 throw new BadCredentialsException(localizationUtils.getLocalizedMessage(MessageKeys.WRONG_PHONE_PASSWORD));
             }
         }
+        /*
         Optional<Role> optionalRole = roleRepository.findById(roleId);
         if (optionalRole.isEmpty() || !roleId.equals(existingUser.getRole().getId())) {
             throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.ROLE_DOES_NOT_EXISTS));
         }
-        if (!optionalUser.get().isActive()) {
+        */
+        if (!existingUser.isActive()) {
             throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.USER_IS_LOCKED));
         }
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                phoneNumber, password, existingUser.getAuthorities()
+                subject, userLoginDTO.getPassword(), existingUser.getAuthorities()
         );
         // Authenticate with java spring security
         authenticationManager.authenticate(authenticationToken);
@@ -119,8 +136,8 @@ public class UserService implements IUserService {
         }
     }
 
-    @Transactional
     @Override
+    @Transactional
     public User updateUser(Long userId, UpdateUserDTO updateUserDTO) throws Exception {
         // Kiểm tra có user
         User existingUser = userRepository.findById(userId)

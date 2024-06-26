@@ -20,7 +20,7 @@ public class LoginResponse {
     private String username;
 
     @JsonProperty("token_type")
-    private String tokenType;
+    private String tokenType = "Bearer";
 
     @JsonProperty("token")
     private String token;

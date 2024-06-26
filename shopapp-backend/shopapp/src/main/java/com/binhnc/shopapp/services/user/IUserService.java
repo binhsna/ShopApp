@@ -3,6 +3,7 @@ package com.binhnc.shopapp.services.user;
 
 import com.binhnc.shopapp.dtos.UpdateUserDTO;
 import com.binhnc.shopapp.dtos.UserDTO;
+import com.binhnc.shopapp.dtos.UserLoginDTO;
 import com.binhnc.shopapp.exceptions.DataNotFoundException;
 import com.binhnc.shopapp.exceptions.InvalidPasswordException;
 import com.binhnc.shopapp.models.User;
@@ -14,7 +15,7 @@ public interface IUserService {
     User createUser(UserDTO userDTO) throws Exception;
 
     // Trả về token
-    String login(String phoneNumber, String password, Long roleId) throws Exception;
+    String login(UserLoginDTO userLoginDTO) throws Exception;
 
     User getUserDetailsFromToken(String token) throws Exception;
 

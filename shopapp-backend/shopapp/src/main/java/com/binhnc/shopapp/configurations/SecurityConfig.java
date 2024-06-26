@@ -24,13 +24,16 @@ public class SecurityConfig {
     // User's detail object theo chuẩn java spring
     @Bean
     public UserDetailsService userDetailsService() {
-        return phoneNumber -> {
-            Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
-            if (optionalUser.isPresent()) {
-                return optionalUser.get();
-            } else {
-                throw new UsernameNotFoundException("Cannot find user with phone number: " + phoneNumber);
+        return subject -> {
+            Optional<User> userByPhoneNumber = userRepository.findByPhoneNumber(subject);
+            if (userByPhoneNumber.isPresent()) {
+                return userByPhoneNumber.get();
             }
+            Optional<User> userByEmail = userRepository.findByEmail(subject);
+            if (userByEmail.isPresent()) {
+                return userByEmail.get();
+            }
+            throw new UsernameNotFoundException("User not found with subject: " + subject);
         };
     }
 

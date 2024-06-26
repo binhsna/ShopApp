@@ -6,18 +6,17 @@ import com.binhnc.shopapp.dtos.UserDTO;
 import com.binhnc.shopapp.dtos.UserLoginDTO;
 import com.binhnc.shopapp.exceptions.DataNotFoundException;
 import com.binhnc.shopapp.exceptions.InvalidPasswordException;
-import com.binhnc.shopapp.models.Role;
 import com.binhnc.shopapp.models.Token;
 import com.binhnc.shopapp.models.User;
 import com.binhnc.shopapp.responses.*;
 import com.binhnc.shopapp.responses.user.LoginResponse;
-import com.binhnc.shopapp.responses.user.RegisterResponse;
 import com.binhnc.shopapp.responses.user.UserListResponse;
 import com.binhnc.shopapp.responses.user.UserResponse;
 import com.binhnc.shopapp.services.token.ITokenService;
 import com.binhnc.shopapp.services.user.IUserService;
 import com.binhnc.shopapp.components.LocalizationUtils;
 import com.binhnc.shopapp.utils.MessageKeys;
+import com.binhnc.shopapp.utils.ValidationUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +28,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -48,74 +48,78 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> register(
             @Valid @RequestBody UserDTO userDTO,
-            BindingResult result) {
-        try {
-            if (result.hasErrors()) {
-                List<String> errorMessages = result.getFieldErrors()
-                        .stream()
-                        .map(FieldError::getDefaultMessage)
-                        .toList();
-                return ResponseEntity.badRequest().body(
-                        ListMessageResponse.builder()
-                                .messages(errorMessages)
-                                .build()
-                );
-            }
-            if (!userDTO.getPassword().equals(userDTO.getRetypePassword())) {
-                return ResponseEntity.badRequest().body(
-                        MessageResponse.builder()
-                                .message(localizationUtils.getLocalizedMessage(MessageKeys.PASSWORD_NOT_MATCH))
-                                .build()
-                );
-            }
-            User user = userService.createUser(userDTO);
-            return ResponseEntity.ok(RegisterResponse.builder()
-                    .message(localizationUtils.getLocalizedMessage(MessageKeys.REGISTER_SUCCESSFULLY))
-                    .user(user)
-                    .build());
-        } catch (Exception e) {
+            BindingResult result) throws Exception {
+        if (result.hasErrors()) {
+            List<String> errorMessages = result.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .toList();
             return ResponseEntity.badRequest().body(
-                    MessageResponse.builder()
-                            .message(localizationUtils.getLocalizedMessage(MessageKeys.REGISTER_FAILED, e.getMessage()))
-                            .build()
-            );
+                    ListMessageResponse.builder()
+                            .messages(errorMessages)
+                            .build());
         }
+        if (userDTO.getEmail() == null || userDTO.getEmail().trim().isBlank()) {
+            if (userDTO.getPhoneNumber() == null || userDTO.getPhoneNumber().isBlank()) {
+                return ResponseEntity.badRequest().body(
+                        ResponseObject.builder()
+                                .status(HttpStatus.BAD_REQUEST)
+                                .data(null)
+                                .message("At least email or phone number is required")
+                                .build()
+                );
+            } else {
+                if (!ValidationUtils.isValidPhoneNumber(userDTO.getPhoneNumber())) {
+                    throw new Exception("Invalid phone number");
+                }
+            }
+        } else {
+            if (!ValidationUtils.isValidEmail(userDTO.getEmail())) {
+                throw new Exception("Invalid email format");
+            }
+        }
+        if (!userDTO.getPassword().equals(userDTO.getRetypePassword())) {
+            return ResponseEntity.badRequest().body(
+                    ResponseObject.builder()
+                            .status(HttpStatus.BAD_REQUEST)
+                            .data(null)
+                            .message(localizationUtils.getLocalizedMessage(MessageKeys.PASSWORD_NOT_MATCH))
+                            .build());
+        }
+        User user = userService.createUser(userDTO);
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.CREATED)
+                .message(localizationUtils.getLocalizedMessage(MessageKeys.REGISTER_SUCCESSFULLY))
+                .data(UserResponse.fromUser(user))
+                .build());
     }
 
     // Đăng nhập
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(
+    public ResponseEntity<ResponseObject> login(
             @Valid @RequestBody UserLoginDTO userLoginDTO,
             HttpServletRequest request
-    ) {
-        // Kiểm tra thông tin đăng nhập và sinh token
-        try {
-            String token = userService.login(
-                    userLoginDTO.getPhoneNumber(),
-                    userLoginDTO.getPassword(),
-                    userLoginDTO.getRoleId() == null ? Long.valueOf(Role.USER) : userLoginDTO.getRoleId()
-            );
-            String userAgent = request.getHeader("User-Agent");
-            User user = userService.getUserDetailsFromToken(token);
-            Token jwtToken = tokenService.addToken(user, token, isMobileDevice(userAgent));
-            // Trả về token trong responses
-            return ResponseEntity.ok().body(
-                    LoginResponse.builder()
-                            .message(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_SUCCESSFULLY))
-                            .token(token)
-                            .tokenType(jwtToken.getTokenType())
-                            .refreshToken(jwtToken.getRefreshToken())
-                            .username(user.getUsername())
-                            .roles(user.getAuthorities().stream().map(item -> item.getAuthority()).toList())
-                            .id(user.getId())
-                            .build());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(
-                    LoginResponse.builder()
-                            .message(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_FAILED, e.getMessage()))
-                            .build()
-            );
-        }
+    ) throws Exception {
+        String token = userService.login(userLoginDTO);
+        String userAgent = request.getHeader("User-Agent");
+        User userDetail = userService.getUserDetailsFromToken(token);
+        Token jwtToken = tokenService.addToken(userDetail, token, isMobileDevice(userAgent));
+
+        LoginResponse loginResponse = LoginResponse.builder()
+                .message(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_SUCCESSFULLY))
+                .token(token)
+                .tokenType(jwtToken.getTokenType())
+                .refreshToken(jwtToken.getRefreshToken())
+                .username(userDetail.getUsername())
+                .roles(userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
+                .id(userDetail.getId())
+                .build();
+        return ResponseEntity.ok().body(
+                ResponseObject.builder()
+                        .status(HttpStatus.OK)
+                        .message(loginResponse.getMessage())
+                        .data(loginResponse)
+                        .build());
     }
 
     private boolean isMobileDevice(String userAgent) {

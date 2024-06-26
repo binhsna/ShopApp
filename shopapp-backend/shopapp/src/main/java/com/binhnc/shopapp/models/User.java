@@ -30,6 +30,9 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "phone_number", length = 10, nullable = false)
     private String phoneNumber;
 
+    @Column(name = "email")
+    private String email;
+
     @Column(name = "address", length = 200)
     private String address;
 

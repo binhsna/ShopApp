@@ -7,7 +7,7 @@ import lombok.*;
 
 import java.util.Date;
 
-@Data // toString
+@Data
 @Builder
 @Getter
 @Setter
@@ -20,6 +20,10 @@ public class UserDTO {
     @JsonProperty("phone_number")
     @NotBlank(message = "Phone number is required")
     private String phoneNumber;
+
+
+    @JsonProperty("email")
+    private String email = "";
 
     private String address;
 
