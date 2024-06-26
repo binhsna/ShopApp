@@ -2,9 +2,11 @@ package com.binhnc.shopapp.controllers;
 
 import com.binhnc.shopapp.components.LocalizationUtils;
 import com.binhnc.shopapp.dtos.OrderDetailDTO;
+import com.binhnc.shopapp.exceptions.DataNotFoundException;
 import com.binhnc.shopapp.models.OrderDetail;
 import com.binhnc.shopapp.responses.ListMessageResponse;
 import com.binhnc.shopapp.responses.MessageResponse;
+import com.binhnc.shopapp.responses.ResponseObject;
 import com.binhnc.shopapp.responses.order.OrderDetailResponse;
 import com.binhnc.shopapp.services.orderdetail.IOrderDetailService;
 import com.binhnc.shopapp.utils.MessageKeys;
@@ -12,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -45,7 +48,9 @@ public class OrderDetailController {
                 );
             }
             OrderDetail newOrderDetail = orderDetailService.createOrderDetail(orderDetailDTO);
-            return ResponseEntity.ok().body(OrderDetailResponse.fromOrderDetail(newOrderDetail));
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                    OrderDetailResponse.fromOrderDetail(newOrderDetail)
+            );
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -80,13 +85,15 @@ public class OrderDetailController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateOrderDetail(
             @Valid @PathVariable("id") Long id,
-            @Valid @RequestBody OrderDetailDTO orderDetailDTO) {
-        try {
-            OrderDetail orderDetail = orderDetailService.updateOrderDetail(id, orderDetailDTO);
-            return ResponseEntity.ok().body(OrderDetailResponse.fromOrderDetail(orderDetail));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+            @Valid @RequestBody OrderDetailDTO orderDetailDTO) throws DataNotFoundException, Exception {
+        OrderDetail orderDetail = orderDetailService.updateOrderDetail(id, orderDetailDTO);
+        return ResponseEntity.ok().body(
+                ResponseObject.builder()
+                        .status(HttpStatus.OK)
+                        .message("Update order detail successfully")
+                        .data(OrderDetailResponse.fromOrderDetail(orderDetail))
+                        .build()
+        );
     }
 
     @DeleteMapping("/{id}")
