@@ -5,6 +5,7 @@ import com.binhnc.shopapp.dtos.OrderDTO;
 import com.binhnc.shopapp.models.Order;
 import com.binhnc.shopapp.responses.ListMessageResponse;
 import com.binhnc.shopapp.responses.MessageResponse;
+import com.binhnc.shopapp.responses.ResponseObject;
 import com.binhnc.shopapp.responses.order.OrderListResponse;
 import com.binhnc.shopapp.responses.order.OrderResponse;
 import com.binhnc.shopapp.services.order.IOrderService;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -51,13 +53,17 @@ public class OrderController {
             }
             Order existingOrder = orderService.createOrder(orderDTO);
             OrderResponse orderResponse = OrderResponse.fromOrder(existingOrder);
-            return ResponseEntity.ok(orderResponse);
+            return ResponseEntity.ok(
+                    ResponseObject.builder()
+                            .status(HttpStatus.OK)
+                            .message("Create new order successfully!")
+                            .data(orderResponse)
+                            .build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     MessageResponse.builder()
-                            .message(localizationUtils.getLocalizedMessage(MessageKeys.INSERT_CATEGORY_FAILED, e.getMessage()))
-                            .build()
-            );
+                            .message(localizationUtils.getLocalizedMessage(MessageKeys.INSERT_ORDER_FAILED, e.getMessage()))
+                            .build());
         }
     }
 
@@ -66,7 +72,11 @@ public class OrderController {
     public ResponseEntity<?> getOrdersByUserId(@Valid @PathVariable("user_id") Long userId) {
         try {
             List<Order> orders = orderService.findByUserId(userId);
-            return ResponseEntity.ok(orders);
+            return ResponseEntity.ok(
+                    ResponseObject.builder()
+                            .message(String.format("Get orders with userId: %d", userId))
+                            .data(orders)
+                            .build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -78,7 +88,12 @@ public class OrderController {
         try {
             Order existingOrder = orderService.getOrderById(orderId);
             OrderResponse orderResponse = OrderResponse.fromOrder(existingOrder);
-            return ResponseEntity.ok(orderResponse);
+            return ResponseEntity.ok(
+                    ResponseObject.builder()
+                            .status(HttpStatus.OK)
+                            .message(String.format("Get order with orderId: %d", orderId))
+                            .data(orderResponse)
+                            .build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -91,7 +106,11 @@ public class OrderController {
             @Valid @RequestBody OrderDTO orderDTO) {
         try {
             Order orderUpdate = orderService.updateOrder(id, orderDTO);
-            return ResponseEntity.ok(orderUpdate);
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .status(HttpStatus.OK)
+                    .message(String.format("Update order with orderId: %d successfully!", id))
+                    .data(orderUpdate)
+                    .build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -113,7 +132,7 @@ public class OrderController {
 
     @GetMapping("/get-orders-by-keyword")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<OrderListResponse> getOrdersByKeyword(
+    public ResponseEntity<?> getOrdersByKeyword(
             @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit
@@ -129,9 +148,15 @@ public class OrderController {
         // Lấy thông số trang
         int totalPages = orderPage.getTotalPages();
         List<OrderResponse> orderResponses = orderPage.getContent();
-        return ResponseEntity.ok(OrderListResponse.builder()
+        OrderListResponse orderListResponse = OrderListResponse.builder()
                 .orders(orderResponses)
                 .totalPages(totalPages)
-                .build());
+                .build();
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .status(HttpStatus.OK)
+                        .message(String.format("Get orders with page: %d, limit: %d", page, limit))
+                        .data(orderListResponse)
+                        .build());
     }
 }

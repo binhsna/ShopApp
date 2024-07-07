@@ -26,9 +26,9 @@ export class UpdateCategoryAdminComponent implements OnInit {
       this.categoryId = +idParam;
       debugger;
       this.categoryService.getCategoryById(this.categoryId).subscribe({
-        next: (response: Category) => {
+        next: (response: any) => {
           debugger;
-          this.updatedCategory = new CategoryDTO(response);
+          this.updatedCategory = new CategoryDTO(response.data);
         }, complete: () => {
           debugger;
         }, error: (error: any) => {

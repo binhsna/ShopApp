@@ -87,11 +87,12 @@ public class UserController {
                             .build());
         }
         User user = userService.createUser(userDTO);
-        return ResponseEntity.ok(ResponseObject.builder()
-                .status(HttpStatus.CREATED)
-                .message(localizationUtils.getLocalizedMessage(MessageKeys.REGISTER_SUCCESSFULLY))
-                .data(UserResponse.fromUser(user))
-                .build());
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .status(HttpStatus.CREATED)
+                        .message(localizationUtils.getLocalizedMessage(MessageKeys.REGISTER_SUCCESSFULLY))
+                        .data(UserResponse.fromUser(user))
+                        .build());
     }
 
     // Đăng nhập
@@ -128,29 +129,34 @@ public class UserController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<LoginResponse> refreshToken(
+    public ResponseEntity<ResponseObject> refreshToken(
             @Valid @RequestBody RefreshTokenDTO refreshTokenDTO
     ) {
         try {
             User userDetail = userService.getUserDetailsFromRefreshToken(refreshTokenDTO.getRefreshToken());
             Token jwtToken = tokenService.refreshToken(refreshTokenDTO.getRefreshToken(), userDetail);
+            LoginResponse loginResponse = LoginResponse.builder()
+                    .message("Refresh token successfully")
+                    .token(jwtToken.getToken())
+                    .tokenType(jwtToken.getTokenType())
+                    .refreshToken(jwtToken.getRefreshToken())
+                    .username(userDetail.getUsername())
+                    .roles(userDetail.getAuthorities().stream().map(item -> item.getAuthority()).toList())
+                    .id(userDetail.getId())
+                    .build();
             return ResponseEntity.ok(
-                    LoginResponse.builder()
-                            .message("Refresh token successfully")
-                            .token(jwtToken.getToken())
-                            .tokenType(jwtToken.getTokenType())
-                            .refreshToken(jwtToken.getRefreshToken())
-                            .username(userDetail.getUsername())
-                            .roles(userDetail.getAuthorities().stream().map(item -> item.getAuthority()).toList())
-                            .id(userDetail.getId())
-                            .build()
-            );
+                    ResponseObject.builder()
+                            .status(HttpStatus.OK)
+                            .message(loginResponse.getMessage())
+                            .data(loginResponse)
+                            .build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
-                    LoginResponse.builder()
+                    ResponseObject.builder()
+                            .status(HttpStatus.BAD_REQUEST)
                             .message(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_FAILED, e.getMessage()))
-                            .build()
-            );
+                            .data(null)
+                            .build());
         }
     }
 
@@ -158,36 +164,60 @@ public class UserController {
     @PutMapping("/details/{userId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    public ResponseEntity<UserResponse> updateUserDetails(
+    public ResponseEntity<ResponseObject> updateUserDetails(
             @PathVariable Long userId,
             @RequestBody UpdateUserDTO updateUserDTO,
             @RequestHeader("Authorization") String authorizationHeader
     ) {
         try {
-            String extractedToken = authorizationHeader.substring(7); // Loại bỏ "Bearer " từ chuỗi token
+            // Loại bỏ "Bearer " từ chuỗi token
+            String extractedToken = authorizationHeader.substring(7);
             User user = userService.getUserDetailsFromToken(extractedToken);
             if (user.getId() != userId) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
             User updateUser = userService.updateUser(userId, updateUserDTO);
-            return ResponseEntity.ok(UserResponse.fromUser(updateUser));
+            UserResponse userResponse = UserResponse.fromUser(updateUser);
+            return ResponseEntity.ok(
+                    ResponseObject.builder()
+                            .status(HttpStatus.OK)
+                            .message("Update user successfully!")
+                            .data(userResponse)
+                            .build());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(
+                    ResponseObject.builder()
+                            .status(HttpStatus.BAD_REQUEST)
+                            .message(e.getMessage())
+                            .data(null)
+                            .build());
         }
     }
 
     // Get user with token
     @PostMapping("/details")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    public ResponseEntity<UserResponse> getUserDetails(
+    public ResponseEntity<ResponseObject> getUserDetails(
             @RequestHeader("Authorization") String authorizationHeader
     ) {
         try {
-            String extractedToken = authorizationHeader.substring(7); // Loại bỏ "Bearer " từ chuỗi token
+            // Loại bỏ "Bearer " từ chuỗi token
+            String extractedToken = authorizationHeader.substring(7);
             User user = userService.getUserDetailsFromToken(extractedToken);
-            return ResponseEntity.ok(UserResponse.fromUser(user));
+            UserResponse userResponse = UserResponse.fromUser(user);
+            return ResponseEntity.ok(
+                    ResponseObject.builder()
+                            .status(HttpStatus.OK)
+                            .message("Get user successfully!")
+                            .data(userResponse)
+                            .build());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(
+                    ResponseObject.builder()
+                            .status(HttpStatus.BAD_REQUEST)
+                            .message(e.getMessage())
+                            .data(null)
+                            .build());
         }
     }
 
@@ -197,13 +227,32 @@ public class UserController {
         try {
             String newPassword = UUID.randomUUID().toString().substring(0, 5);
             userService.resetPassword(userId, newPassword);
-            return ResponseEntity.ok(newPassword);
+            return ResponseEntity.ok(
+                    ResponseObject.builder()
+                            .status(HttpStatus.OK)
+                            .message("Reset password successfully!")
+                            .data(newPassword)
+                            .build());
         } catch (InvalidPasswordException e) {
-            return ResponseEntity.badRequest().body("Invalid password");
+            return ResponseEntity.badRequest().body(
+                    ResponseObject.builder()
+                            .status(HttpStatus.BAD_REQUEST)
+                            .message("Invalid password")
+                            .data(null)
+                            .build());
         } catch (DataNotFoundException e) {
-            return ResponseEntity.badRequest().body("User not found");
+            return ResponseEntity.badRequest().body(
+                    ResponseObject.builder()
+                            .status(HttpStatus.BAD_REQUEST)
+                            .message("User not found")
+                            .data(null)
+                            .build());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .message(e.getMessage())
+                    .data(null)
+                    .build());
         }
     }
 
@@ -241,12 +290,23 @@ public class UserController {
                     .map(UserResponse::fromUser);
             int totalPages = userPage.getTotalPages();
             List<UserResponse> userResponses = userPage.getContent();
-            return ResponseEntity.ok(UserListResponse.builder()
+            UserListResponse userListResponse = UserListResponse.builder()
                     .users(userResponses)
                     .totalPages(totalPages)
-                    .build());
+                    .build();
+            return ResponseEntity.ok(
+                    ResponseObject.builder()
+                            .status(HttpStatus.OK)
+                            .message(String.format("Get users page: %d, limit: %d", page, limit))
+                            .data(userListResponse)
+                            .build());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(
+                    ResponseObject.builder()
+                            .status(HttpStatus.BAD_REQUEST)
+                            .message(e.getMessage())
+                            .data(null)
+                            .build());
         }
     }
 

@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice // Chỉ định lớp này xử lý ngoại lệ chung
+// Chỉ định lớp này xử lý ngoại lệ chung
+@RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -16,8 +17,7 @@ public class GlobalExceptionHandler {
                 ResponseObject.builder()
                         .status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .message(exception.getMessage())
-                        .build()
-        );
+                        .build());
     }
 
     @ExceptionHandler(DataNotFoundException.class)
@@ -27,8 +27,6 @@ public class GlobalExceptionHandler {
                 ResponseObject.builder()
                         .status(HttpStatus.NOT_FOUND)
                         .message(exception.getMessage())
-                        .build()
-        );
+                        .build());
     }
-    
 }

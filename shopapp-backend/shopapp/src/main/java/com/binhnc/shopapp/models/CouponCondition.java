@@ -20,9 +20,8 @@ public class CouponCondition {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "coupon_id", nullable = false)
-    @JsonBackReference
     private Coupon coupon;
 
     @Column(name = "attribute", nullable = false)

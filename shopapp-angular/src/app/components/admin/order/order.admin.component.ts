@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {OrderService} from "../../../services/order.service";
 import {OrderResponse} from "../../../responses/order/order.response";
+import {TokenService} from "../../../services/token.service";
 
 @Component({
   selector: 'app-order-admin',
@@ -15,23 +16,27 @@ export class OrderAdminComponent implements OnInit {
   visiblePages: number[] = [];
   totalPages: number = 0;
   keyword: string = "";
+  token: string = "";
 
   constructor(
     private orderService: OrderService,
+    private tokenService: TokenService,
     private router: Router) {
   }
 
   ngOnInit() {
+    this.token = this.tokenService.getToken();
     this.currentPage = Number(localStorage.getItem("currentOrderAdminPage")) || 1;
     this.getAllOrders(this.keyword.trim(), this.currentPage, this.itemsPerPage);
   }
 
   getAllOrders(keyword: string, page: number, limit: number) {
-    this.orderService.getAllOrders(keyword, page, limit).subscribe({
+    debugger;
+    this.orderService.getAllOrders(keyword, page, limit, this.token).subscribe({
       next: (response: any) => {
         debugger;
-        this.orders = response.orders;
-        this.totalPages = response.totalPages;
+        this.orders = response.data.orders;
+        this.totalPages = response.data.totalPages;
         this.visiblePages = this.generateVisiblePageArray(this.currentPage, this.totalPages);
       },
       complete: () => {

@@ -37,12 +37,12 @@ export class UpdateProductAdminComponent implements OnInit {
       this.productService.getProductById(this.productId).subscribe({
         next: (response: any) => {
           debugger;
-          if (response.product_images && response.product_images.length > 0) {
-            response.product_images.forEach((product_image: ProductImage) => {
+          if (response.data.product_images && response.data.product_images.length > 0) {
+            response.data.product_images.forEach((product_image: ProductImage) => {
               product_image.image_url = `${environment.apiBaseUrl}/products/images/${product_image.image_url}`;
             });
           }
-          this.updatedProduct = response;
+          this.updatedProduct = response.data;
           // Bắt đầu với ảnh đầu tiên
           this.showImage(0);
         }, complete: () => {

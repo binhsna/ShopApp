@@ -1,6 +1,7 @@
 package com.binhnc.shopapp.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -75,12 +76,13 @@ public class Order {
     @Column(name = "active")
     private Boolean active; // Thuộc về admin
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order")
     @JsonManagedReference //=> Fix error -> Vòng lặp vô hạn
     private List<OrderDetail> orderDetails;
 
     @ManyToOne
-    @JsonBackReference
+    @JsonIgnore
     @JoinColumn(name = "coupon_id", referencedColumnName = "id")
+    @JsonBackReference
     private Coupon coupon;
 }

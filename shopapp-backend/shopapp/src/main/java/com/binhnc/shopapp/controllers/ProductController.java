@@ -6,10 +6,12 @@ import com.binhnc.shopapp.dtos.ProductImageDTO;
 import com.binhnc.shopapp.models.Product;
 import com.binhnc.shopapp.models.ProductImage;
 import com.binhnc.shopapp.responses.MessageResponse;
+import com.binhnc.shopapp.responses.ResponseObject;
 import com.binhnc.shopapp.responses.product.ProductListResponse;
 import com.binhnc.shopapp.responses.product.ProductResponse;
 import com.binhnc.shopapp.services.product.IProductRedisService;
 import com.binhnc.shopapp.services.product.IProductService;
+import com.binhnc.shopapp.services.storage.IStorageService;
 import com.binhnc.shopapp.utils.MessageKeys;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.javafaker.Faker;
@@ -24,17 +26,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,13 +42,15 @@ public class ProductController {
     @Autowired
     private IProductService productService;
     @Autowired
+    private IStorageService storageService;
+    @Autowired
     private LocalizationUtils localizationUtils;
     @Autowired
     private IProductRedisService productRedisService;
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     @GetMapping("")
-    public ResponseEntity<ProductListResponse> getProducts(
+    public ResponseEntity<?> getProducts(
             @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "0", name = "category_id") Long categoryId,
             @RequestParam(defaultValue = "0", name = "page") int page,
@@ -82,10 +82,16 @@ public class ProductController {
                 pageRequest
         );
         //  }
-        return ResponseEntity.ok(ProductListResponse.builder()
+        ProductListResponse productListResponse = ProductListResponse.builder()
                 .products(productResponses)
                 .totalPages(totalPages)
-                .build());
+                .build();
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .status(HttpStatus.OK)
+                        .message(String.format("Get products with page: %d, limit: %d", page, limit))
+                        .data(productListResponse)
+                        .build());
     }
 
     // http://localhost:8080/api/v1/products/6
@@ -97,9 +103,19 @@ public class ProductController {
             //return ResponseEntity.ok().body(productResponse);
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(productResponse);
+                    .body(
+                            ResponseObject.builder()
+                                    .status(HttpStatus.OK)
+                                    .message(String.format("Get product with id: %d successfully", productId))
+                                    .data(productResponse)
+                                    .build());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(
+                    ResponseObject.builder()
+                            .status(HttpStatus.BAD_REQUEST)
+                            .message(e.getMessage())
+                            .data(null)
+                            .build());
         }
     }
 
@@ -113,9 +129,19 @@ public class ProductController {
             List<Product> products = productService.findProductsByIds(productIds);
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(products);
+                    .body(
+                            ResponseObject.builder()
+                                    .status(HttpStatus.OK)
+                                    .message("Get products successfully!")
+                                    .data(products)
+                                    .build());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(
+                    ResponseObject.builder()
+                            .status(HttpStatus.BAD_REQUEST)
+                            .message(e.getMessage())
+                            .data(null)
+                            .build());
         }
     }
 
@@ -132,11 +158,18 @@ public class ProductController {
                 return ResponseEntity.badRequest().body(errorMessages);
             }
             Product newProduct = productService.createProduct(productDTO);
-            return ResponseEntity.ok(newProduct);
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                    ResponseObject.builder()
+                            .status(HttpStatus.CREATED)
+                            .message("Create new product successfully!")
+                            .data(newProduct)
+                            .build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(MessageResponse.builder()
+                    .body(ResponseObject.builder()
+                            .status(HttpStatus.BAD_REQUEST)
                             .message(localizationUtils.getLocalizedMessage(MessageKeys.INSERT_PRODUCT_FAILED, e.getMessage()))
+                            .data(null)
                             .build());
         }
     }
@@ -168,7 +201,7 @@ public class ProductController {
                             .body(localizationUtils.getLocalizedMessage(MessageKeys.UPLOAD_IMAGES_FILE_MUST_BE_IMAGE));
                 }
                 // Lưu file và cập nhật thumbnail trong DTO
-                String fileName = storeFile(file);
+                String fileName = storageService.storeFile(file);
                 // Lưu vào đối tượng product trong DB...
                 ProductImage productImage = productService.createProductImage(
                         existingProduct.getId(),
@@ -178,9 +211,18 @@ public class ProductController {
                                 .build());
                 productImages.add(productImage);
             }
-            return ResponseEntity.ok(productImages);
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .status(HttpStatus.OK)
+                    .message("Upload images successfully!")
+                    .data(productImages)
+                    .build());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(
+                    ResponseObject.builder()
+                            .status(HttpStatus.BAD_REQUEST)
+                            .message(e.getMessage())
+                            .data(null)
+                            .build());
         }
     }
 
@@ -210,42 +252,21 @@ public class ProductController {
         }
     }
 
-    private String storeFile(MultipartFile file) throws IOException {
-        if (!isImageFile(file) || file.getOriginalFilename() == null) {
-            throw new IOException("Invalid image format");
-        }
-        // Lấy ra tên gốc file
-        String filename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-        // Thêm UUID vào trước tên file để đảm bảo tên file là duy nhất
-        String uniqueFileName = UUID.randomUUID() + "_" + filename;
-        // Đường dẫn đến thư mục mà quản lý file
-        java.nio.file.Path uploadDir = Paths.get("uploads");
-        // Kiểm tra và tạo thư mục nếu nó không tồn tại
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectories(uploadDir);
-        }
-        // Đường dẫn đầy đủ đến file
-        java.nio.file.Path destination = Paths.get(uploadDir.toString(), uniqueFileName);
-        // Sao chép file vào thư mục đích
-        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-        return uniqueFileName;
-    }
-
-    private boolean isImageFile(MultipartFile file) {
-        String contentType = file.getContentType();
-        return contentType != null && contentType.startsWith("image/");
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProduct(
             @PathVariable Long id,
             @Valid @RequestBody ProductDTO productDTO) {
         try {
             Product updateProduct = productService.updateProduct(id, productDTO);
-            return ResponseEntity.ok(updateProduct);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    ResponseObject.builder()
+                            .status(HttpStatus.OK)
+                            .message(String.format("Update product with id: %d successfully!", id))
+                            .build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(MessageResponse.builder()
+                    .body(ResponseObject.builder()
+                            .status(HttpStatus.BAD_REQUEST)
                             .message(localizationUtils.getLocalizedMessage(MessageKeys.UPDATE_PRODUCT_FAILED, e.getMessage()))
                             .build());
         }

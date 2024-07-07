@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {environment} from "../environments/environment";
 import {OrderDTO} from "../dtos/order/order.dto";
@@ -26,12 +26,19 @@ export class OrderService {
     return this.http.get(url);
   }
 
-  getAllOrders(keyword: string, page: number, limit: number)
+  getAllOrders(keyword: string, page: number, limit: number, token: string)
     : Observable<OrderResponse[]> {
+    debugger;
     const params = new HttpParams()
       .set('keyword', keyword)
       .set('page', page.toString())
-      .set('limit', limit.toString())
-    return this.http.get<any>(this.apiGetAllOrders, {params});
+      .set('limit', limit.toString());
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    });
+    const options = {params: params, headers: headers};
+
+    return this.http.get<any>(this.apiGetAllOrders, options);
   }
 }

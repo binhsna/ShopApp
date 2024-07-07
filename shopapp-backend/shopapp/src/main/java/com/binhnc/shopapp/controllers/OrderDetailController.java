@@ -44,13 +44,15 @@ public class OrderDetailController {
                 return ResponseEntity.badRequest().body(
                         ListMessageResponse.builder()
                                 .messages(errorMessages)
-                                .build()
-                );
+                                .build());
             }
             OrderDetail newOrderDetail = orderDetailService.createOrderDetail(orderDetailDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(
-                    OrderDetailResponse.fromOrderDetail(newOrderDetail)
-            );
+                    ResponseObject.builder()
+                            .status(HttpStatus.CREATED)
+                            .message(String.format("Create order with orderId: %d, productId: %d", orderDetailDTO.getOrderId(), orderDetailDTO.getProductId()))
+                            .data(OrderDetailResponse.fromOrderDetail(newOrderDetail))
+                            .build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -60,7 +62,12 @@ public class OrderDetailController {
     public ResponseEntity<?> getOrderDetail(@Valid @PathVariable("id") Long id) {
         try {
             OrderDetail orderDetail = orderDetailService.findById(id);
-            return ResponseEntity.ok().body(OrderDetailResponse.fromOrderDetail(orderDetail));
+            return ResponseEntity.ok().body(
+                    ResponseObject.builder()
+                            .status(HttpStatus.OK)
+                            .message(String.format("Get order with orderId: %d", id))
+                            .data(OrderDetailResponse.fromOrderDetail(orderDetail))
+                            .build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -75,7 +82,12 @@ public class OrderDetailController {
                     .stream()
                     .map(orderDetail -> OrderDetailResponse.fromOrderDetail(orderDetail))
                     .toList();
-            return ResponseEntity.ok(orderDetailResponses);
+            return ResponseEntity.ok(
+                    ResponseObject.builder()
+                            .status(HttpStatus.OK)
+                            .message(String.format("Get list order detail with orderId: %d", orderId))
+                            .data(orderDetailResponses)
+                            .build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -11,121 +11,122 @@ import {UserResponse} from "../../responses/user/user.response";
 import {CartService} from "../../services/cart.service";
 
 @Component({
-    selector: 'app-login',
-    templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss']
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-    @ViewChild("loginForm") loginForm!: NgForm
-    /*
-    // Login user
-    phoneNumber: string = "0971912772";
-    password: string = "123";
-    */
+  @ViewChild("loginForm") loginForm!: NgForm
+  /*
+  // Login user
+  phoneNumber: string = "0971912772";
+  password: string = "7b0b5";
+  */
 
-    // Login admin
-    phoneNumber: string = "0971912776";
-    password: string = "123";
-    showPassword: boolean = false;
-    roles: Role[] = [];// Mảng roles
-    rememberMe: boolean = true;
-    selectedRole: Role | undefined; // Biến để lưu giá trị được chọn từ dropdown
-    userResponse?: UserResponse;
+  // Login admin
+  phoneNumber: string = "0971912776";
+  password: string = "123";
+  showPassword: boolean = false;
+  roles: Role[] = [];// Mảng roles
+  rememberMe: boolean = true;
+  selectedRole: Role | undefined; // Biến để lưu giá trị được chọn từ dropdown
+  userResponse?: UserResponse;
 
-    constructor(
-        private router: Router,
-        private userService: UserService,
-        private tokenService: TokenService,
-        private roleService: RoleService,
-        private cartService: CartService
-    ) {
-    }
+  constructor(
+    private router: Router,
+    private userService: UserService,
+    private tokenService: TokenService,
+    private roleService: RoleService,
+    private cartService: CartService
+  ) {
+  }
 
-    // Khi trang login được load
-    ngOnInit() {
-        // Gọi API lấy ra danh sách roles và lưu vào biến roles
+  // Khi trang login được load
+  ngOnInit() {
+    // Gọi API lấy ra danh sách roles và lưu vào biến roles
+    debugger
+    this.roleService.getRoles().subscribe({
+      next: (roles: Role[]) => { // Sử dụng kiểu Role[]
         debugger
-        this.roleService.getRoles().subscribe({
-            next: (roles: Role[]) => { // Sử dụng kiểu Role[]
-                debugger
-                this.roles = roles;
-                this.selectedRole = roles.length > 0 ? roles[0] : undefined;
-            }, error: (error: any) => {
-                debugger
-                console.error('Error getting roles: ', error);
-            }
-        });
-    }
-
-    onPhoneNumberChange() {
-        console.log(`Phone typed: ${this.phoneNumber}`);
-    }
-
-    login() {
+        this.roles = roles;
+        this.selectedRole = roles.length > 0 ? roles[0] : undefined;
+      }, error: (error: any) => {
         debugger
-        const loginDTO: LoginDTO = {
-            phone_number: this.phoneNumber,
-            password: this.password,
-            role_id: this.selectedRole?.id ?? 1
-        }
-        // Call api from userService
-        this.userService.login(loginDTO).subscribe(
-            {
-                next: (response: LoginResponse) => {
-                    debugger
-                    const {token} = response; // const token = response.token;
-                    if (this.rememberMe) {
-                        this.tokenService.setToken(token);
-                        this.userService.getUserDetail(token).subscribe({
-                            next: (response: any) => {
-                                debugger;
-                                /*
-                                    this.userResponse = {
-                                    id: response.id,
-                                    fullname: response.fullname,
-                                    phone_number: response.phone_number,
-                                    address: response.address,
-                                    is_active: response.is_active,
-                                    date_of_birth: new Date(response.date_of_birth),
-                                    facebook_account_id: response.facebook_account_id,
-                                    google_account_id: response.google_account_id,
-                                    role: response.role
-                                  }
-                                 */
-                                this.userResponse = {
-                                    ...response,
-                                    date_of_birth: new Date(response.date_of_birth)
-                                };
-                                this.userService.saveUserResponseToLocalStorage(this.userResponse);
-                                if (this.userResponse?.role.name.toUpperCase().trim() == 'ADMIN') {
-                                    this.router.navigate(['/admin']);
-                                } else if (this.userResponse?.role.name.toUpperCase().trim() == 'USER') {
-                                    this.router.navigate(['/']);
-                                }
+        console.error('Error getting roles: ', error);
+      }
+    });
+  }
 
-                            },
-                            complete: () => {
-                                debugger;
-                                this.cartService.refreshCart();
-                            }, error: (error: any) => {
-                                alert(error?.error?.message)
-                            }
-                        });
-                    }
-                    // npm install @ngrx/store
+  onPhoneNumberChange() {
+    console.log(`Phone typed: ${this.phoneNumber}`);
+  }
 
-                },
-                complete: () => {
-                    debugger
-                }, error: (error: any) => {
-                    // Xử lý lỗi nếu có
-                    alert(error?.error?.message);
+  login() {
+    debugger
+    const loginDTO: LoginDTO = {
+      phone_number: this.phoneNumber,
+      password: this.password,
+      //   role_id: this.selectedRole?.id ?? 1
+    }
+    // Call api from userService
+    this.userService.login(loginDTO).subscribe(
+      {
+        next: (response: any) => {
+          debugger
+          //const {token} = response.data;
+          const token = response.data.token;
+          if (this.rememberMe) {
+            this.tokenService.setToken(token);
+            this.userService.getUserDetail(token).subscribe({
+              next: (response: any) => {
+                debugger;
+                /*
+                    this.userResponse = {
+                    id: response.id,
+                    fullname: response.fullname,
+                    phone_number: response.phone_number,
+                    address: response.address,
+                    is_active: response.is_active,
+                    date_of_birth: new Date(response.date_of_birth),
+                    facebook_account_id: response.facebook_account_id,
+                    google_account_id: response.google_account_id,
+                    role: response.role
+                  }
+                 */
+                this.userResponse = {
+                  ...response.data,
+                  date_of_birth: new Date(response.date_of_birth)
+                };
+                this.userService.saveUserResponseToLocalStorage(this.userResponse);
+                if (this.userResponse?.role.name.toUpperCase().trim() == 'ADMIN') {
+                  this.router.navigate(['/admin']);
+                } else if (this.userResponse?.role.name.toUpperCase().trim() == 'USER') {
+                  this.router.navigate(['/']);
                 }
-            }
-        );
-    }
 
-    togglePassword() {
-        this.showPassword = !this.showPassword;
-    }
+              },
+              complete: () => {
+                debugger;
+                this.cartService.refreshCart();
+              }, error: (error: any) => {
+                alert(error?.error?.message)
+              }
+            });
+          }
+          // npm install @ngrx/store
+
+        },
+        complete: () => {
+          debugger
+        }, error: (error: any) => {
+          // Xử lý lỗi nếu có
+          alert(error?.error?.message);
+        }
+      }
+    );
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
 }

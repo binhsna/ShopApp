@@ -1,0 +1,1473 @@
+{
+	"info": {
+		"_postman_id": "5e6656fc-0db2-4464-825e-954e1c4fd1cf",
+		"name": "ShopApp-backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28847766"
+	},
+	"item": [
+		{
+			"name": "categories",
+			"item": [
+				{
+					"name": "api/v1/categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/categories?page=1&limit=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"categories"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/categories/{id}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/categories/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/categories",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Phụ kiện\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/categories",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/categories",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Đồ điện tử\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/categories/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/categories",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/categories/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"categories",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "api/v1/users/register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "vi",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fullname\":\"Nguyễn Công Bình\",\r\n    \"phone_number\":\"0971912772\",\r\n    \"address\":\"Nhà Hà Nội\",\r\n    \"password\":\"123\",\r\n    \"retype_password\":\"123\",\r\n    \"date_of_birth\":\"2001-03-08\",\r\n    \"facebook_account_id\": 0,\r\n    \"google_account_id\": 0,\r\n    \"role_id\":1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/users/register",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/users/details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "vi",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/users/details",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"users",
+								"details"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "api/v1/users/details",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept-Language",
+										"value": "vi",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{API_PREFIX}}/users/details",
+									"host": [
+										"{{API_PREFIX}}"
+									],
+									"path": [
+										"users",
+										"details"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 21 Jun 2024 09:15:45 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"fullname\": \"Admin 1\",\n    \"phone_number\": \"0971912776\",\n    \"address\": \"Hà Đông, Hà Nội\",\n    \"is_active\": true,\n    \"date_of_birth\": 983984400000,\n    \"facebook_account_id\": 0,\n    \"google_account_id\": 0,\n    \"role\": {\n        \"id\": 2,\n        \"name\": \"ADMIN\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "api/v1/users/details/{userId}",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJwaG9uZU51bWJlciI6IjA5NzE5MTI3NzIiLCJ1c2VySWQiOjIsInN1YiI6IjA5NzE5MTI3NzIiLCJleHAiOjE3MjEzODY5NjR9.smq5hbVG7YtX9Zevw9qzk39bEfaLxfRSyYUHAE-Ts6o",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "vi",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fullname\":\"Nguyễn Công Bình\",\r\n    \"phone_number\":\"0971912772\",\r\n    \"address\":\"Nhà a, ngõ b\",\r\n    \"password\":\"123\",\r\n    \"date_of_birth\":\"2001-03-08\",\r\n    \"facebook_account_id\": 1,\r\n    \"google_account_id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/users/details/2",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"users",
+								"details",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/users/login",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "vi",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "mobile",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"binh19964@huce.edu.vn\",\r\n    \"password\": \"7b0b5\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/users/login",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/users/refreshToken",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "vi",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refresh_token\": \"3f01e520-d4a0-4223-82cb-4d84757c7776\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/users/refresh-token",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"users",
+								"refresh-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/users/login_admin",
+					"request": {
+						"auth": {
+							"type": "bearer"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "vi",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone_number\": \"0971912776\",\r\n    \"password\": \"123\",\r\n    \"role_id\":2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/users/login",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/users",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone_number\":\"0971912776\",\r\n    \"password\":\"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/users?keyword=&page=1&limit=1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": ""
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/users/reset-password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/users/reset-password/2",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"users",
+								"reset-password",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/users/block-user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN_ADMIN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/users/block/2/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"users",
+								"block",
+								"2",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "roles",
+			"item": [
+				{
+					"name": "api/v1/roles",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "vi",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/roles",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/actuator/health",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/actuator/health",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/health-check/health",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/health-check/health",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"health-check",
+								"health"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "orders",
+			"item": [
+				{
+					"name": "api/v1/orders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\":2,\r\n    \"fullname\":\"Nguyễn Công Bình\",\r\n    \"email\":\"binh19964@huce.edu.vn\",\r\n    \"phone_number\":\"0971912772\",\r\n    \"address\": \"Hà Nội\",\r\n    \"note\":\"Hàng dễ vỡ, xin nhẹ tay\",\r\n    \"total_money\":123.45,\r\n    \"shipping_address\":\"Nhà a, hàng phố\",\r\n     \"shipping_method\":\"express\",\r\n    \"payment_method\":\"cod\",\r\n    \"cart_items\":[\r\n        {\r\n            \"product_id\":1,\r\n            \"quantity\":4\r\n        },\r\n        {\r\n            \"product_id\":2,\r\n            \"quantity\":5\r\n        },\r\n        {\r\n            \"product_id\":3,\r\n            \"quantity\":10\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/orders",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/orders\\{id}",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJwaG9uZU51bWJlciI6IjA5NzE5MTI3NzIiLCJzdWIiOiIwOTcxOTEyNzcyIiwiZXhwIjoxNzIwOTQ0ODUzfQ.oxMkom5031Ro1l4FZBoXougBkgBJWb2Xh8L9SPF0msE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\":1,\r\n    \"fullname\":\"Nguyễn Công Bình\",\r\n    \"email\":\"binhsna@gmail.com\",\r\n    \"phone_number\":\"0971912773\",\r\n    \"address\": \"Hà Nội\",\r\n    \"note\":\"Hàng dễ vỡ, xin nhẹ tay\",\r\n    \"total_money\":123.45,\r\n    \"shipping_date\":\"2024-07-10\",\r\n    \"shipping_method\":\"express\",\r\n    \"shipping_address\":\"Nhà a, hàng phố\",\r\n    \"payment_method\":\"cod\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/orders/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"orders",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/orders\\{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/orders/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"orders",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/orders/user/{user_id}",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone_number\":\"0971912776\",\r\n    \"password\":\"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/orders/user/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"orders",
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/orders/{id}",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone_number\":\"0971912772\",\r\n    \"password\":\"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/orders/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"orders",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/orders/get-orders-by-keyword",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJwaG9uZU51bWJlciI6IjA5NzE5MTI3NzYiLCJ1c2VySWQiOjEsInN1YiI6IjA5NzE5MTI3NzYiLCJleHAiOjE3MjI5MDk0OTV9.-HWo-TJtxY5LO5AHffCzbt33WdLCMuHw-bHCvCa7v14",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone_number\":\"0971912776\",\r\n    \"password\":\"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/orders/get-orders-by-keyword?keyword=&page=1&limit=1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"orders",
+								"get-orders-by-keyword"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": ""
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "order_details",
+			"item": [
+				{
+					"name": "api/v1/order_details",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"order_id\":1,\r\n    \"product_id\":1,\r\n    \"email\":\"binhsna@gmail.com\",\r\n    \"price\":12.13,\r\n    \"number_of_products\": 2,\r\n    \"total_money\":123.45,\r\n    \"color\":\"#ffeeff\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/order_details",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"order_details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/order_detail\\{id}",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\":1,\r\n    \"full_name\":\"Nguyễn Công Bình\",\r\n    \"email\":\"binhsna@gmail.com\",\r\n    \"phone_number\":\"0971912776\",\r\n    \"address\": \"Hà Nội\",\r\n    \"note\":\"Hàng dễ vỡ, xin nhẹ tay\",\r\n    \"total_money\":123.45,\r\n    \"shipping_method\":\"express\",\r\n    \"shipping_address\":\"Nhà a, hàng phố\",\r\n    \"payment_method\":\"cod\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/order_details/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"order_details",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/order_details\\{order_id}",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/order_details/order/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"order_details",
+								"order",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/order_details/{id}",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"order_id\":1,\r\n    \"product_id\":2,\r\n    \"email\":\"binhsna@gmail.com\",\r\n    \"price\":12.13,\r\n    \"number_of_products\": 5,\r\n    \"total_money\":123.45,\r\n    \"color\":\"#ffeeff\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/order_details/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"order_details",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/order_details/{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/order_details/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"order_details",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "products",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/products/images/{imageName}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/products/images/king-lion.png",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"products",
+								"images",
+								"king-lion.png"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/products/by-ids",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/products/by-ids?ids=1,2,3",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"products",
+								"by-ids"
+							],
+							"query": [
+								{
+									"key": "ids",
+									"value": "1,2,3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/products?page=1&limit=10&keyword=&category_id=1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "keyword",
+									"value": ""
+								},
+								{
+									"key": "category_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/products/1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/products/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/products",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"name\":\"Ipad pro 2024\",\r\n        \"price\":812.34,\r\n        \"thumbnail\":\"This is test product\",\r\n        \"category_id\":1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/products",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/products\\uploads",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJwaG9uZU51bWJlciI6IjA5NzE5MTI3NzYiLCJ1c2VySWQiOjEsInN1YiI6IjA5NzE5MTI3NzYiLCJleHAiOjE3MjE2NzE3MzB9.vkYbQ8XQXE33i8O8ZgqzRv-6vRvVGyKNDpHSwpQFcjU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": [
+										"/C:/Users/Daica/Downloads/Screenshot 2024-06-23 020359 - Copy - Copy.png",
+										"/C:/Users/Daica/Downloads/Screenshot 2024-06-23 020359 - Copy (2) - Copy.png",
+										"/C:/Users/Daica/Downloads/Screenshot 2024-06-23 020359 - Copy (2).png"
+									]
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/products/uploads/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"products",
+								"uploads",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/products",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n{\r\n    \"name\": \"Lightweight Plastic Bottle\",\r\n    \"price\": 1243,\r\n    \"thumbnail\": \"\",\r\n    \"description\": \"Est nam assumenda quia dicta eos ducimus dolores.\",\r\n    \"category_id\": 1\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/products/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api/v1/products",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/products/5",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"products",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/products/generateFakerProducts",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/products/generateFakerProducts",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"products",
+								"generateFakerProducts"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "comments",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/comments/{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/comments/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"comments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/comments/{id}",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\":2,\r\n    \"product_id\":1,\r\n    \"content\":\"The content update\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/comments/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"comments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/comments",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\":2,\r\n    \"product_id\":1,\r\n    \"content\":\"The content\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/comments",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/comments",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/comments?user_id=2&product_id=1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"comments"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "2"
+								},
+								{
+									"key": "product_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "coupons",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/coupons",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/coupons/calculate?couponCode=HEAVEN&totalAmount=120.0",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"coupons",
+								"calculate"
+							],
+							"query": [
+								{
+									"key": "couponCode",
+									"value": "HEAVEN"
+								},
+								{
+									"key": "totalAmount",
+									"value": "120.0"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -1,6 +1,7 @@
 package com.binhnc.shopapp.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +18,7 @@ public class OrderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
+    
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     @JsonBackReference //=> Fix error -> Vòng lặp vô hạn
@@ -38,9 +39,4 @@ public class OrderDetail {
 
     @Column(name = "color")
     private String color;
-
-    @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name = "coupon_id", referencedColumnName = "id")
-    private Coupon coupon;
 }

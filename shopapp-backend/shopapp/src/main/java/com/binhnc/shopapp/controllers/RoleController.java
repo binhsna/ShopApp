@@ -1,8 +1,10 @@
 package com.binhnc.shopapp.controllers;
 
 import com.binhnc.shopapp.models.Role;
+import com.binhnc.shopapp.responses.ResponseObject;
 import com.binhnc.shopapp.services.role.IRoleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,11 @@ public class RoleController {
     @GetMapping("")
     public ResponseEntity<?> getAllRoles() {
         List<Role> roles = roleService.getAllRoles();
-        return ResponseEntity.ok(roles);
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .status(HttpStatus.OK)
+                        .message("Get roles successfully!")
+                        .data(roles)
+                        .build());
     }
 }
